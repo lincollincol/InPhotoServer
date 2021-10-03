@@ -6,8 +6,12 @@ import com.linc.plugins.*
 
 fun main() {
     embeddedServer(Netty, port = 8885, host = "0.0.0.0") {
+        configureDi()
+        configureDatabase()
+
         configureRouting()
         configureSerialization()
         configureMonitoring()
+
     }.start(wait = true)
 }

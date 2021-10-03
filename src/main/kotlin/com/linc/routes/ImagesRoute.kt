@@ -1,8 +1,9 @@
 package com.linc.routes
 
 import com.linc.data.database.DatabaseManager
-import com.linc.data.entity.AccountEntity
-import com.linc.data.entity.PhotoEntity
+import com.linc.data.repository.AccountsRepository
+import com.linc.entity.PhotoEntity
+import com.linc.utils.Constants
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*
@@ -20,9 +21,24 @@ private val data = mutableListOf<PhotoEntity>().apply {
 }
 
 fun Route.photos() {
-    val databaseManager = DatabaseManager()
-    databaseManager.init()
-    get("/photo/fetch") {
+
+//    val repository = AccountsRepository()
+
+   /* get("/auth/sign-uppppppp") {
+        try {
+            repository.saveAccount(
+                name = null,
+                email = "xlincollincolx@gmail.com",
+                password = "12345678"
+            )
+            call.respond(HttpStatusCode.OK, "User created!")
+        } catch (e: Exception) {
+            e.printStackTrace()
+            call.respond(HttpStatusCode.OK, e.localizedMessage)
+        }
+    }*/
+
+    /*get("/photo/fetch") {
         val count = call.parameters["count"]?.toInt() ?: 1
         databaseManager.getAllUsers().forEach {
             println(it.data)
@@ -35,12 +51,12 @@ fun Route.photos() {
         call.respond(
             HttpStatusCode.OK,
             "Success!"
-            /*when {
-                count > data.size -> data.last()
-                else -> data.take(count)
-            }*/
+//            when {
+//                count > data.size -> data.last()
+//                else -> data.take(count)
+//            }
         )
-    }
+    }*/
 
     post<PhotoEntity>("/photo/upload") {
 //        val photo = call.receive<PhotoEntity>()
@@ -62,10 +78,10 @@ fun Route.photos() {
         call.respond(HttpStatusCode.OK)
     }
 
-    post("/photo/acc") {
+    /*post("/photo/acc") {
         val data = call.receive<AccountEntity>()
         println(data)
         call.respond(HttpStatusCode.OK)
-    }
+    }*/
 
 }

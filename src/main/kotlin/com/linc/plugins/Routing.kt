@@ -1,5 +1,6 @@
 package com.linc.plugins
 
+import com.linc.routes.auth
 import com.linc.routes.photos
 import io.ktor.routing.*
 import io.ktor.http.*
@@ -10,9 +11,8 @@ import io.ktor.response.*
 import io.ktor.request.*
 
 fun Application.configureRouting() {
-    
-
     routing {
+        auth()
         photos()
 
         // Static plugin. Try to access `/static/index.html`
