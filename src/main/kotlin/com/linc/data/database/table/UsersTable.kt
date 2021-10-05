@@ -1,23 +1,17 @@
 package com.linc.data.database.table
 
 
-import com.linc.entity.AccountEntity
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
 import java.util.*
 
 object UsersTable : Table("users") {
 
     val id: Column<UUID> = uuid("id").primaryKey()
-    val status: Column<String?> = varchar("status", 128).nullable()
-    val publicAccess: Column<Boolean> = bool("public_access").default(true)
+    val name: Column<String?> = varchar("name", 32).uniqueIndex().nullable()
+    val status: Column<String?> = text("status").nullable()
+    val publicAccess: Column<Boolean> = bool("is_public").default(true)
+    val accessToken: Column<String> = varchar("access_token", 128).uniqueIndex()
     val avatarId: Column<UUID?> = uuid("avatar_id").references(ContentsTable.id).nullable()
-
-    fun insertEntity(entity: AccountEntity) {
-        insert {
-
-        }
-    }
 
 }

@@ -9,7 +9,7 @@ object SqlExecutor {
     suspend fun <T> executeQuery(
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
         block: () -> T
-    ): Result<T> = withContext(dispatcher) {
+    ): Result<T?> = withContext(dispatcher) {
         try {
             Result.success(transaction { block() })
         } catch (e: Exception) {

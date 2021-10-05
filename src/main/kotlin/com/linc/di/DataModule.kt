@@ -1,7 +1,7 @@
 package com.linc.di
 
 import com.linc.data.database.DatabaseManager
-import com.linc.data.database.dao.AccountDao
+import com.linc.data.database.dao.CredentialsDao
 import com.linc.data.database.dao.UserDao
 import com.linc.data.repository.AccountsRepository
 import com.linc.utils.Constants
@@ -13,8 +13,8 @@ val dataModule = module {
 
     // Database/DAO
     single<DatabaseManager> { DatabaseManager(provideJdbcUrl()) }
-    single<AccountDao> { AccountDao(get()) }
-    single<UserDao> { UserDao() }
+    single<CredentialsDao> { CredentialsDao() }
+    single<UserDao> { UserDao(get()) }
 
     // Repositories
     single<AccountsRepository> { AccountsRepository(get(), get()) }

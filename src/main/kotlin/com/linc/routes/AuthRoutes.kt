@@ -12,19 +12,27 @@ import org.koin.ktor.ext.inject
 
 fun Route.auth() {
 
-    /**
-     * TODO:
-     * a. Move access token to user table
-     * b. Maybe separate nickname and email to new table
-     */
-
     val repository: AccountsRepository by inject()
 
     post<SignUpRequestDTO>("/auth/sign-up") { request ->
-        val operation = repository.createAccount(request)
+        val operation = repository.signUp(request)
 
         val userEntity = operation.getOrElse {
-            call.respond(HttpStatusCode.BadRequest)
+            call.respond(HttpStatusCode.OK, BaseResponse(2, it.message))
+            return@post
+        }
+
+        call.respond(
+            HttpStatusCode.OK,
+            BaseResponse(1, userEntity.toDTO())
+        )
+    }
+
+    post<SignUpRequestDTO>("/auth/sign-in") { request ->
+        val operation = repository.signIn(request)
+
+        val userEntity = operation.getOrElse {
+            call.respond(HttpStatusCode.OK, BaseResponse(2, it.message))
             return@post
         }
 
