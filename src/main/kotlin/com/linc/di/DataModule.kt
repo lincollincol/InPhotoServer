@@ -3,7 +3,7 @@ package com.linc.di
 import com.linc.data.database.DatabaseManager
 import com.linc.data.database.dao.CredentialsDao
 import com.linc.data.database.dao.UserDao
-import com.linc.data.repository.AccountsRepository
+import com.linc.data.repository.AuthRepository
 import com.linc.utils.Constants
 import org.koin.dsl.module
 
@@ -14,8 +14,8 @@ val dataModule = module {
     // Database/DAO
     single<DatabaseManager> { DatabaseManager(provideJdbcUrl()) }
     single<CredentialsDao> { CredentialsDao() }
-    single<UserDao> { UserDao(get()) }
+    single<UserDao> { UserDao() }
 
     // Repositories
-    single<AccountsRepository> { AccountsRepository(get(), get()) }
+    single<AuthRepository> { AuthRepository(get(), get(), get()) }
 }

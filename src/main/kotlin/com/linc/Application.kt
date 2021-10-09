@@ -9,6 +9,8 @@ fun main() {
         configureDi()
         configureDatabase()
 
+        configureAuth()
+
         configureRouting()
         configureSerialization()
         configureMonitoring()

@@ -1,9 +1,6 @@
 package com.linc.routes
 
-import com.linc.data.database.DatabaseManager
-import com.linc.data.repository.AccountsRepository
 import com.linc.entity.PhotoEntity
-import com.linc.utils.Constants
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.request.*

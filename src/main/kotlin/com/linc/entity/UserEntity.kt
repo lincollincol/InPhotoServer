@@ -7,6 +7,5 @@ data class UserEntity(
     val name: String?,
     val status: String?,
     val publicProfile: Boolean,
-    val accessToken: String,
     val avatarId: UUID?,
 )

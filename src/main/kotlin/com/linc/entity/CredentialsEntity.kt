@@ -9,5 +9,6 @@ data class CredentialsEntity(
     val email: String,
     val password: String,
     val createdTimestamp: DateTime,
+    val accessToken: String,
     val userId: UUID
 )

@@ -12,6 +12,7 @@ fun ResultRow.toCredentialsEntity() = CredentialsEntity(
     email = get(CredentialsTable.email),
     password = get(CredentialsTable.password),
     createdTimestamp = get(CredentialsTable.createdTimestamp),
+    accessToken = get(CredentialsTable.accessToken),
     userId = get(CredentialsTable.userId)
 )
 
@@ -20,16 +21,18 @@ fun ResultRow.toUserEntity() = UserEntity(
     name = get(UsersTable.name),
     status = get(UsersTable.status),
     publicProfile = get(UsersTable.publicAccess),
-    accessToken = get(UsersTable.accessToken),
     avatarId = get(UsersTable.avatarId)
 )
 
+/**
+ * Users and Credentials tables SQL join  ResultRow
+ */
 fun ResultRow.toUserExtendedEntity() = UserExtendedEntity(
     id = get(UsersTable.id),
     name = get(UsersTable.name),
     email = get(CredentialsTable.email),
     status = get(UsersTable.status),
     publicProfile = get(UsersTable.publicAccess),
-    accessToken = get(UsersTable.accessToken),
+    accessToken = get(CredentialsTable.accessToken),
     avatarId = get(UsersTable.avatarId)
 )

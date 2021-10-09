@@ -1,6 +1,7 @@
 package com.linc.data.database.table
 
 
+import com.linc.data.database.table.UsersTable.uniqueIndex
 import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import org.joda.time.DateTime
@@ -12,6 +13,7 @@ object CredentialsTable : Table("credentials") {
     val email: Column<String> = varchar("email", 32).uniqueIndex()
     val password: Column<String> = varchar("password", 16)
     val createdTimestamp: Column<DateTime> = datetime("created_at")
+    val accessToken: Column<String> = text("access_token").uniqueIndex()
     val userId: Column<UUID> = uuid("user_id").references(UsersTable.id)
 
 /*

@@ -1,6 +1,6 @@
 package com.linc.di
 
-import com.linc.utils.TokenGenerator
+import com.linc.utils.JWTUtils
 import org.koin.dsl.module
 import java.security.SecureRandom
 import java.util.*
@@ -12,6 +12,6 @@ val utilsModule = module {
 
     single<SecureRandom> { provideSecureRandom() }
     single<Base64.Encoder> { provideBase64UrlEncoder() }
-    single<TokenGenerator> { TokenGenerator(get(), get()) }
+    single<JWTUtils> { JWTUtils() }
 
 }
