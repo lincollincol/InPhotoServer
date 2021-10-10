@@ -8,6 +8,7 @@ import java.util.*
 object ContentsTable : Table("contents") {
 
     val id: Column<UUID> = uuid("id").primaryKey()
-    val data: Column<Blob> = blob("data")
+    val data: Column<ByteArray> = binary("data", 255)
+    val extension: Column<String> = varchar("extension", 8)
 
 }

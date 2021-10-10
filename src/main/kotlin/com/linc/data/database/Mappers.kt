@@ -1,7 +1,9 @@
 package com.linc.data.database
 
+import com.linc.data.database.table.ContentsTable
 import com.linc.data.database.table.CredentialsTable
 import com.linc.data.database.table.UsersTable
+import com.linc.entity.ContentEntity
 import com.linc.entity.CredentialsEntity
 import com.linc.entity.UserEntity
 import com.linc.entity.UserExtendedEntity
@@ -25,7 +27,7 @@ fun ResultRow.toUserEntity() = UserEntity(
 )
 
 /**
- * Users and Credentials tables SQL join  ResultRow
+ * SQL join  ResultRow mappers
  */
 fun ResultRow.toUserExtendedEntity() = UserExtendedEntity(
     id = get(UsersTable.id),
@@ -35,4 +37,9 @@ fun ResultRow.toUserExtendedEntity() = UserExtendedEntity(
     publicProfile = get(UsersTable.publicAccess),
     accessToken = get(CredentialsTable.accessToken),
     avatarId = get(UsersTable.avatarId)
+)
+fun ResultRow.toContentEntity() = ContentEntity(
+    id = get(ContentsTable.id),
+    data = get(ContentsTable.data),
+    extension = get(ContentsTable.extension)
 )

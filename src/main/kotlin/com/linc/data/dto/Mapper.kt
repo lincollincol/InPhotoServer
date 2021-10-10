@@ -1,12 +1,11 @@
 package com.linc.data.dto
 
-import com.linc.data.dto.response.auth.AccountResponseDTO
-import com.linc.data.dto.response.auth.UserResponseDTO
+import com.linc.data.dto.response.auth.AccountDTO
+import com.linc.data.dto.response.auth.UserDTO
 import com.linc.entity.CredentialsEntity
-import com.linc.entity.UserEntity
 import com.linc.entity.UserExtendedEntity
 
-fun CredentialsEntity.toDTO() = AccountResponseDTO(
+fun CredentialsEntity.toDTO() = AccountDTO(
     id.toString(),
     email,
     password,
@@ -14,6 +13,6 @@ fun CredentialsEntity.toDTO() = AccountResponseDTO(
     userId.toString()
 )
 
-fun UserExtendedEntity.toDTO() = UserResponseDTO(
+fun UserExtendedEntity.toDTO() = UserDTO(
     id.toString(), name, email, status, publicProfile, accessToken, avatarId.toString()
 )

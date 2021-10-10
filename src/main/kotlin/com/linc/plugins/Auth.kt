@@ -13,6 +13,7 @@ import kotlin.reflect.KSuspendFunction1
 fun Application.configureAuth() {
 
     val jwtUtils: JWTUtils by inject()
+    val usersRepository: UsersRepository by inject()
 
     install(Authentication) {
         jwt(AUTH_CONFIG) {
@@ -23,8 +24,10 @@ fun Application.configureAuth() {
                     .getClaim("id")
                     .asString()
 
+                val user = usersRepository.getUserById(id).getOrNull()
+
                 when {
-                    id.isNotEmpty() -> JWTPrincipal(credentials.payload)
+                    user != null -> JWTPrincipal(credentials.payload)
                     else -> null
                 }
 

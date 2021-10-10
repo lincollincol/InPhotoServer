@@ -2,7 +2,7 @@ package com.linc.data.repository
 
 import com.linc.data.database.dao.CredentialsDao
 import com.linc.data.database.dao.UserDao
-import com.linc.data.dto.request.auth.SignUpRequestDTO
+import com.linc.data.dto.request.auth.SignUpDTO
 import com.linc.entity.UserExtendedEntity
 import com.linc.utils.JWTUtils
 
@@ -12,7 +12,7 @@ class AuthRepository(
     private val jwtUtils: JWTUtils
 ) {
 
-    suspend fun signIn(request: SignUpRequestDTO) : Result<UserExtendedEntity> {
+    suspend fun signIn(request: SignUpDTO) : Result<UserExtendedEntity> {
         val credentials = credentialsDao.getAccountByEmail(request.email).getOrNull()
             ?: return Result.failure(Exception("Account does not exist!"))
 
@@ -26,7 +26,7 @@ class AuthRepository(
         return Result.success(user)
     }
 
-    suspend fun signUp(request: SignUpRequestDTO) : Result<UserExtendedEntity> {
+    suspend fun signUp(request: SignUpDTO) : Result<UserExtendedEntity> {
         val userId = userDao.createEmptyUser().getOrNull()
             ?: return Result.failure(Exception("Cannot create user!"))
 
