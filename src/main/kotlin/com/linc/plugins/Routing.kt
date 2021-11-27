@@ -16,10 +16,10 @@ import io.ktor.request.*
 fun Application.configureRouting() {
     routing {
         auth()
+        photos()
 
         authenticate(AUTH_CONFIG) {
             users()
-            photos()
         }
 
         // Static plugin. Try to access `/static/index.html`

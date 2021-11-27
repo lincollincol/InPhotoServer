@@ -1,7 +1,8 @@
 package com.linc.routes
 
-import com.linc.data.dto.request.auth.SignUpDTO
-import com.linc.data.dto.toDTO
+import com.linc.data.network.dto.request.auth.SignInDTO
+import com.linc.data.network.dto.request.auth.SignUpDTO
+import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.AuthRepository
 import com.linc.utils.extensions.errorMessage
 import com.linc.utils.extensions.respondFailure
@@ -17,7 +18,7 @@ fun Route.auth() {
     post<SignUpDTO>("/auth/sign-up") { request ->
         repository.signUp(request).fold(
             onSuccess = { userEntity ->
-                call.respondSuccess(userEntity.toDTO())
+                call.respondSuccess(userEntity.toUserDto())
             },
             onFailure = {
                 call.respondFailure(it.errorMessage())
@@ -25,10 +26,10 @@ fun Route.auth() {
         )
     }
 
-    post<SignUpDTO>("/auth/sign-in") { request ->
+    post<SignInDTO>("/auth/sign-in") { request ->
         repository.signIn(request).fold(
             onSuccess = { userEntity ->
-                call.respondSuccess(userEntity.toDTO())
+                call.respondSuccess(userEntity.toUserDto())
             },
             onFailure = {
                 call.respondFailure(it.errorMessage())

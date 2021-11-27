@@ -6,7 +6,7 @@ import java.util.*
 
 object TagsTable : Table("tags") {
 
-    val id: Column<UUID> = ContentsTable.uuid("id").primaryKey()
+    val id: Column<UUID> = uuid("id").primaryKey()
     val tag: Column<String> = varchar("tag", 24)
     val postId: Column<UUID> = uuid("post_id").references(PostsTable.id)
 

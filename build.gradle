@@ -40,6 +40,10 @@ dependencies {
 
     // Image compressor
     // net.coobird:thumbnailator:[0.4, 0.5)
-    implementation "net.coobird:thumbnailator:[0.4, 0.5)"
+//    implementation "net.coobird:thumbnailator:[0.4, 0.5)"
 
+//    implementation 'com.cloudinary:kotlin-url-gen:1.0.0'
+
+    implementation 'com.cloudinary:cloudinary-http44:1.29.0'
+//    compile group: 'com.cloudinary', name: 'cloudinary-http44', version: '[Cloudinary API version, e.g. 1.1.3]'
 }

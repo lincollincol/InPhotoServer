@@ -10,20 +10,9 @@ import java.util.*
 object CredentialsTable : Table("credentials") {
 
     val id: Column<UUID> = uuid("id").primaryKey()
-    val email: Column<String> = varchar("email", 32).uniqueIndex()
     val password: Column<String> = varchar("password", 16)
     val createdTimestamp: Column<DateTime> = datetime("created_at")
     val accessToken: Column<String> = text("access_token").uniqueIndex()
     val userId: Column<UUID> = uuid("user_id").references(UsersTable.id)
-
-/*
-    val id: Column<UUID> = uuid("id").primaryKey()
-    val email: Column<String> = varchar("email", 32)
-    val name: Column<String?> = varchar("name", 32).uniqueIndex().nullable()
-    val password: Column<String> = varchar("password", 16)
-    val createdTimestamp: Column<DateTime> = datetime("created_at")
-    val accessToken: Column<String> = varchar("access_token", 255).uniqueIndex()
-    val userId: Column<UUID> = uuid("user_id").references(UsersTable.id)
-*/
 
 }

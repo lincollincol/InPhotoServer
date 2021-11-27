@@ -1,0 +1,10 @@
+// Template
+val cloudinary = Cloudinary("cloudinary://<your-api-key>:<your-api-secret>@<your-cloud-name>")
+// InPhoto
+val cloudinary = Cloudinary("cloudinary://942731591311994:6_ai7gKJmk0Jr543WHMvNeJ1ubY@dqildid2v")
+
+cloudinary.uploader().upload(
+    image,
+    File("/home/linc/Завантаження/d4c94790-61a8-441c-ad99-ed4438215d3e.jpg"),
+    ObjectUtils.asMap("public_id", randomUUID())
+)

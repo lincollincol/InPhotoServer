@@ -1,6 +1,5 @@
 package com.linc.di
 
-import com.linc.utils.ImageUtils
 import com.linc.utils.JWTUtils
 import org.koin.dsl.module
 import java.security.SecureRandom
@@ -14,6 +13,5 @@ val utilsModule = module {
     single<SecureRandom> { provideSecureRandom() }
     single<Base64.Encoder> { provideBase64UrlEncoder() }
     single<JWTUtils> { JWTUtils() }
-    single<ImageUtils> { ImageUtils() }
 
 }

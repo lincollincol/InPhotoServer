@@ -5,6 +5,7 @@ import org.jetbrains.exposed.sql.Table
 import java.sql.Blob
 import java.util.*
 
+@Deprecated("Use [url] instead", level = DeprecationLevel.HIDDEN)
 object ContentsTable : Table("contents") {
 
     val id: Column<UUID> = uuid("id").primaryKey()

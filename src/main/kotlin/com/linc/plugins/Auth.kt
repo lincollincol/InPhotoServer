@@ -1,14 +1,12 @@
 package com.linc.plugins
 
 import com.linc.data.repository.UsersRepository
-import com.linc.entity.UserEntity
 import com.linc.utils.Constants.AUTH_CONFIG
 import com.linc.utils.JWTUtils
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
 import org.koin.ktor.ext.inject
-import kotlin.reflect.KSuspendFunction1
 
 fun Application.configureAuth() {
 

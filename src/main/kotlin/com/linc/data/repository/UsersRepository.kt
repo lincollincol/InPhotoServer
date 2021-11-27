@@ -1,18 +1,15 @@
 package com.linc.data.repository
 
-import com.linc.data.database.dao.ContentDao
 import com.linc.data.database.dao.UserDao
-import com.linc.data.dto.request.users.UpdateNameDTO
-import com.linc.data.dto.request.users.UpdateStatusDTO
-import com.linc.data.dto.request.users.UpdateVisibilityDTO
-import com.linc.entity.ContentEntity
-import com.linc.entity.UserEntity
-import java.io.File
+import com.linc.data.network.dto.request.users.UpdateNameDTO
+import com.linc.data.network.dto.request.users.UpdateStatusDTO
+import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
+import com.linc.data.database.entity.UserEntity
 import java.util.*
 
 class UsersRepository(
-    private val usersDao: UserDao,
-    private val contentDao: ContentDao
+    private val usersDao: UserDao
+//    private val contentDao: ContentDao
 ) {
 
     suspend fun getUserById(userId: String) : Result<UserEntity> {
@@ -21,7 +18,7 @@ class UsersRepository(
         return Result.success(user)
     }
 
-    suspend fun getUserAvatar(userId: String) : Result<ContentEntity> {
+    suspend fun getUserAvatar(userId: String) : Result<String?> {
         val content = usersDao.getUserAvatar(UUID.fromString(userId)).getOrNull()
             ?: return Result.failure(Exception("Avatar not found!"))
 
@@ -62,12 +59,12 @@ class UsersRepository(
         return Result.success(Unit)
     }
 
-    suspend fun updateUserAvatar(userId: String, image: File) : Result<Unit> {
-        val avatarId = contentDao.uploadContent(image.readBytes(), image.extension).getOrNull()
-            ?: return Result.failure(Exception("Can not update upload image!"))
-
-        usersDao.updateUserAvatar(UUID.fromString(userId), avatarId).getOrNull()
+    suspend fun updateUserAvatar(userId: String, imageUrl: String) : Result<Unit> {
+        usersDao.updateUserAvatar(UUID.fromString(userId), imageUrl).getOrNull()
             ?: return Result.failure(Exception("Can not update user avatar!"))
+
+//        usersDao.updateUserAvatar(UUID.fromString(userId), avatarId).getOrNull()
+//            ?: return Result.failure(Exception("Can not update user avatar!"))
 
         return Result.success(Unit)
     }
