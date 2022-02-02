@@ -1,8 +1,6 @@
 package com.linc.plugins
 
-import com.linc.routes.auth
-import com.linc.routes.photos
-import com.linc.routes.users
+import com.linc.routes.*
 import com.linc.utils.Constants.AUTH_CONFIG
 import io.ktor.routing.*
 import io.ktor.http.*
@@ -18,7 +16,10 @@ fun Application.configureRouting() {
         auth()
         photos()
 
+//        publicTest()
+
         authenticate(AUTH_CONFIG) {
+//            privateTest()
             users()
         }
 

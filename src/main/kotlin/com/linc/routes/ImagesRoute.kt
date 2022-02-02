@@ -6,6 +6,7 @@ import com.linc.data.database.entity.PhotoEntity
 import com.linc.utils.extensions.randomUUID
 import io.ktor.application.*
 import io.ktor.http.*
+import io.ktor.http.ContentDisposition.Companion.File
 import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.response.*
