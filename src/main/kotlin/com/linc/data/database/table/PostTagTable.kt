@@ -7,7 +7,7 @@ import java.util.*
 object PostTagTable : Table("post_tag") {
 
     val id: Column<UUID> = uuid("id").primaryKey()
-    val userId: Column<UUID> = uuid("tag_id").references(TagsTable.id)
+    val tagId: Column<UUID> = uuid("tag_id").references(TagsTable.id)
     val postId: Column<UUID> = uuid("post_id").references(PostsTable.id)
 
 }

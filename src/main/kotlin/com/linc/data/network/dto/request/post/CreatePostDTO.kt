@@ -5,3 +5,10 @@ data class CreatePostDTO(
     val description: String,
     val tags: List<String>,
 )
+
+data class CreatePostDTO2(
+    val userId: String,
+    val url: String,
+    val description: String,
+    val tags: List<String>,
+)

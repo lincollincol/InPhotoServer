@@ -10,7 +10,7 @@ suspend inline fun <reified T : Any> ApplicationCall.respondOk(responseBody: Bas
     respond(responseBody)
 }
 
-suspend inline fun <reified T : Any> ApplicationCall.respondSuccess(responseBody: T) {
+suspend inline fun <reified T : Any> ApplicationCall.respondSuccess(responseBody: T?) {
     respondOk(BaseResponse(HttpStatusCode.OK.description, false, responseBody))
 }
 

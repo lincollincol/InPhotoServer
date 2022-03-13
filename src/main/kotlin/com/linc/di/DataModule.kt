@@ -2,9 +2,7 @@ package com.linc.di
 
 import com.cloudinary.Cloudinary
 import com.linc.data.database.DatabaseManager
-import com.linc.data.database.dao.CredentialsDao
-import com.linc.data.database.dao.PostDao
-import com.linc.data.database.dao.UserDao
+import com.linc.data.database.dao.*
 import com.linc.data.network.ContentManager
 import com.linc.data.repository.AuthRepository
 import com.linc.data.repository.MediaRepository
@@ -23,12 +21,14 @@ val dataModule = module {
     single<CredentialsDao> { CredentialsDao() }
     single<UserDao> { UserDao() }
     single<PostDao> { PostDao() }
+    single<TagDao> { TagDao() }
+    single<PostTagDao> { PostTagDao() }
 
     // Repositories
     single<AuthRepository> { AuthRepository(get(), get(), get()) }
     single<UsersRepository> { UsersRepository(get()) }
     single<MediaRepository> { MediaRepository(get()) }
-    single<PostsRepository> { PostsRepository(get()) }
+    single<PostsRepository> { PostsRepository(get(), get(), get()) }
 
     // Remote api
     single<ContentManager> { ContentManager(get()) }

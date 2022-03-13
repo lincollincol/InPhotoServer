@@ -17,4 +17,16 @@ object SqlExecutor {
             Result.failure(e)
         }
     }
+
+    suspend fun <T> executeQuery2(
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        block: () -> T
+    ): T? = withContext(dispatcher) {
+        try {
+            transaction { block() }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }
