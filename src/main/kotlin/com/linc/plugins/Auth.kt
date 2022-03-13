@@ -21,14 +21,12 @@ fun Application.configureAuth() {
                 val id = credentials.payload
                     .getClaim("id")
                     .asString()
-
-                val user = usersRepository.getUserById(id).getOrNull()
-
-                when {
-                    user != null -> JWTPrincipal(credentials.payload)
-                    else -> null
+                try {
+                    usersRepository.getUserById(id)
+                    JWTPrincipal(credentials.payload)
+                } catch (e: Exception) {
+                    null
                 }
-
             }
         }
     }

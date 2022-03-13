@@ -30,13 +30,15 @@ dependencies {
     implementation("org.apache.commons:commons-email:1.5")
 
     // Di
-    def koin_version= "3.1.2"
+    def koin_version = "3.1.2"
     implementation "io.insert-koin:koin-ktor:$koin_version"
     implementation "io.insert-koin:koin-logger-slf4j:$koin_version"
 
     // JWT auth
     implementation "io.ktor:ktor-auth:$ktor_version"
     implementation "io.ktor:ktor-auth-jwt:$ktor_version"
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+
 
     // Image compressor
     // net.coobird:thumbnailator:[0.4, 0.5)

@@ -10,14 +10,18 @@ class ContentManager(
     private val cloudinary: Cloudinary
 ) {
 
-    fun upload(stream: InputStream) : String {
+    enum class Type(val value: String) {
+        AVATAR("avatar"), FEED("feed")
+    }
+
+    fun upload(stream: InputStream, type: Type): String {
         cloudinary
         val image = File("temp", "${randomUUID()}_${System.currentTimeMillis()}")
         image.writeBytes(stream.buffered().use { it.readBytes() })
 
         val response = cloudinary.uploader().upload(
             image,
-            ObjectUtils.asMap("public_id", randomUUID(), "folder", "posts")
+            ObjectUtils.asMap("public_id", randomUUID(), "folder", type.value)
         )
         image.delete()
 
