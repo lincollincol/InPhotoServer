@@ -1,17 +1,18 @@
 package com.linc.data.repository
 
 import com.linc.data.network.ContentManager
+import java.io.InputStream
 
 class MediaRepository(
-    val contentManager: ContentManager
+    private val contentManager: ContentManager
 ) {
 
-    fun uploadAvatar() {
-
+    fun uploadAvatar(data: InputStream): String {
+        return contentManager.upload(data, ContentManager.Type.AVATAR)
     }
 
-    fun uploadPost() {
-
+    fun uploadPost(data: InputStream): String {
+        return contentManager.upload(data, ContentManager.Type.POST)
     }
 
 }

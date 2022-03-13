@@ -1,17 +1,16 @@
 package com.linc.routes
 
-import com.linc.data.network.ContentManager
 import com.linc.data.network.dto.request.users.UpdateNameDTO
 import com.linc.data.network.dto.request.users.UpdateStatusDTO
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import com.linc.data.network.mapper.toUserDto
+import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.errorMessage
 import com.linc.utils.extensions.getFileData
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
-import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
@@ -20,7 +19,8 @@ fun Route.users() {
 
     val usersRepository: UsersRepository by inject()
 //    val imageUtils: ImageUtils by inject()
-    val contentManager: ContentManager by inject()
+    val mediaRepository: MediaRepository by inject()
+//    val contentManager: ContentManager by inject()
 
     post<UpdateNameDTO>("/users/update-name/{id}") { request ->
         try {
@@ -56,37 +56,15 @@ fun Route.users() {
         try {
             val userId = call.parameters["id"].toString()
             val data = call.receiveMultipart().getFileData()
-            val imageUrl: String? = data?.let { contentManager.upload(it, ContentManager.Type.AVATAR) }
+            val imageUrl: String? = data?.let { mediaRepository.uploadAvatar(it) }
 
             if (imageUrl == null) {
                 call.respondFailure("Image not found!")
                 return@post
             }
-
             usersRepository.updateUserAvatar(userId, imageUrl)
             val user = usersRepository.getExtendedUserById(userId)
             call.respondSuccess(user.toUserDto())
-            /*val userId = call.parameters["id"].toString()
-            val data = call.receiveMultipart()
-            var imageUrl: String? = null
-
-            data.forEachPart { part ->
-                if (part is PartData.FileItem) {
-                    imageUrl = contentManager.upload(
-                        part.streamProvider(),
-                        ContentManager.Type.AVATAR
-                    )
-                }
-            }
-
-            if (imageUrl == null) {
-                call.respondFailure("Image not found!")
-                return@post
-            }
-
-            usersRepository.updateUserAvatar(userId, imageUrl!!)
-            val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())*/
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
