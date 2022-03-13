@@ -11,9 +11,9 @@ suspend inline fun <reified T : Any> ApplicationCall.respondOk(responseBody: Bas
 }
 
 suspend inline fun <reified T : Any> ApplicationCall.respondSuccess(responseBody: T) {
-    respondOk(BaseResponse(HttpStatusCode.OK.description, responseBody))
+    respondOk(BaseResponse(HttpStatusCode.OK.description, false, responseBody))
 }
 
 suspend inline fun ApplicationCall.respondFailure(errorMessage: String) {
-    respondOk(BaseResponse(errorMessage, Unit))
+    respondOk(BaseResponse(errorMessage, true, null))
 }

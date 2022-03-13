@@ -1,12 +1,11 @@
 package com.linc.data.database.entity
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.google.gson.annotations.SerializedName
+
 import java.util.*
 
-@Serializable
 data class PhotoEntity(
-    @SerialName("assa")
+    @SerializedName("assa")
     val uid: String,
     val name: String,
     val url: String

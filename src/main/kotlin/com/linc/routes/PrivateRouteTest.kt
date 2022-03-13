@@ -9,6 +9,6 @@ import io.ktor.routing.*
 fun Route.privateTest() {
     get("/access") {
         call.defaultTextContentType(ContentType.Application.Json)
-        call.respond(HttpStatusCode.OK, BaseResponse("success", "token-token"))
+        call.respond(HttpStatusCode.OK, BaseResponse("success", false, "token-token"))
     }
 }

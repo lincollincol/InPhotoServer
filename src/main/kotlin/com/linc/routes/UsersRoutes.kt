@@ -7,6 +7,7 @@ import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.errorMessage
+import com.linc.utils.extensions.getFileData
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
@@ -41,16 +42,6 @@ fun Route.users() {
         }
     }
 
-    post<UpdateStatusDTO>("/users/update-status/{id}") { request ->
-        try {
-            val userId = call.parameters["id"].toString()
-            usersRepository.updateUserStatus(userId, request)
-            call.respondSuccess(Unit)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }
-
     post<UpdateVisibilityDTO>("/users/update-visibility/{id}") { request ->
         try {
             val userId = call.parameters["id"].toString()
@@ -64,6 +55,18 @@ fun Route.users() {
     post("/users/update-avatar/{id}") { request ->
         try {
             val userId = call.parameters["id"].toString()
+            val data = call.receiveMultipart().getFileData()
+            val imageUrl: String? = data?.let { contentManager.upload(it, ContentManager.Type.AVATAR) }
+
+            if (imageUrl == null) {
+                call.respondFailure("Image not found!")
+                return@post
+            }
+
+            usersRepository.updateUserAvatar(userId, imageUrl)
+            val user = usersRepository.getExtendedUserById(userId)
+            call.respondSuccess(user.toUserDto())
+            /*val userId = call.parameters["id"].toString()
             val data = call.receiveMultipart()
             var imageUrl: String? = null
 
@@ -83,7 +86,7 @@ fun Route.users() {
 
             usersRepository.updateUserAvatar(userId, imageUrl!!)
             val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(user.toUserDto())*/
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
