@@ -1,7 +1,7 @@
 package com.linc.data.database.mapper
 
-import com.linc.data.database.entity.PostTagEntity
-import com.linc.data.database.entity.TagEntity
+import com.linc.data.database.entity.post.PostTagEntity
+import com.linc.data.database.entity.post.TagEntity
 import com.linc.data.database.table.PostTagTable
 import com.linc.data.database.table.TagsTable
 import org.jetbrains.exposed.sql.ResultRow

@@ -1,8 +1,8 @@
 package com.linc.data.network.mapper
 
+import com.linc.data.database.entity.user.UserEntity
+import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.network.dto.response.users.UserDTO
-import com.linc.data.database.entity.UserEntity
-import com.linc.data.database.entity.UserExtendedEntity
 
 fun UserDTO.toUserEntity() = UserEntity(
     id = id,

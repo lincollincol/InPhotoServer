@@ -1,8 +1,8 @@
 package com.linc.data.repository
 
 import com.linc.data.database.dao.UserDao
-import com.linc.data.database.entity.UserEntity
-import com.linc.data.database.entity.UserExtendedEntity
+import com.linc.data.database.entity.user.UserEntity
+import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.network.dto.request.users.UpdateNameDTO
 import com.linc.data.network.dto.request.users.UpdateStatusDTO
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO

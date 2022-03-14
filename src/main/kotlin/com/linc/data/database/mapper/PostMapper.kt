@@ -1,8 +1,8 @@
 package com.linc.data.database.mapper
 
-import com.linc.data.database.entity.ExtendedPostEntity
-import com.linc.data.database.entity.PostEntity
-import com.linc.data.database.entity.TagEntity
+import com.linc.data.database.entity.post.ExtendedPostEntity
+import com.linc.data.database.entity.post.PostEntity
+import com.linc.data.database.entity.post.TagEntity
 import com.linc.data.database.table.PostsTable
 import com.linc.data.database.table.UsersTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -15,20 +15,12 @@ fun ResultRow.toPostEntity() = PostEntity(
     userId = get(PostsTable.userId).toString()
 )
 
-/*
-    val id: String,
-    val createdTimestamp: Long,
-    val description: String,
-    val contentUrl: String,
-    val username: String,
-    val userAvatarUrl: String?,
-    val userId: String,
-    val tagsCount: Int
- */
 fun ResultRow.toExtendedPostEntity(
-//    likesCount: Int,
-    tags: List<TagEntity>,
-//    commentsCount: Int
+    likesCount: Int,
+    commentsCount: Int,
+    isLiked: Boolean,
+    isBookmarked: Boolean,
+    tags: List<TagEntity>
 ) = ExtendedPostEntity(
     id = get(PostsTable.id).toString(),
     createdTimestamp = get(PostsTable.createdTimestamp).millis,
@@ -37,5 +29,9 @@ fun ResultRow.toExtendedPostEntity(
     userId = get(PostsTable.userId).toString(),
     username = get(UsersTable.name),
     userAvatarUrl = get(UsersTable.avatarUrl),
+    isLiked = isLiked,
+    isBookmarked = isBookmarked,
+    likesCount = likesCount,
+    commentsCount = commentsCount,
     tags = tags
 )

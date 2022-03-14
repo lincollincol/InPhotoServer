@@ -1,4 +1,4 @@
-package com.linc.data.database.entity
+package com.linc.data.database.entity.auth
 
 import org.joda.time.DateTime
 import java.util.*

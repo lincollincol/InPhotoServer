@@ -1,5 +1,6 @@
 package com.linc.routes
 
+import com.linc.data.network.dto.request.post.CommentDTO
 import com.linc.data.network.dto.request.post.PostDTO2
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
@@ -14,24 +15,6 @@ fun Route.posts() {
 
     val postsRepository: PostsRepository by inject()
     val mediaRepository: MediaRepository by inject()
-
-    /*post<CreatePostDTO>("/post") { request ->
-        try {
-
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }*/
-
-    get("/user-posts/{userId}") {
-        try {
-            val userId = call.parameters["userId"].toString()
-            val posts = postsRepository.getUserPosts(userId)
-            call.respondSuccess(posts)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }
 
     get("/posts/{postId}") {
         try {
@@ -66,6 +49,98 @@ fun Route.posts() {
         try {
             val postId = call.parameters["postId"].toString()
             postsRepository.deletePost(postId)
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    post("/posts/{postId}/like/{userId}") {
+        try {
+            postsRepository.likePost(
+                call.parameters["postId"].toString(),
+                call.parameters["userId"].toString(),
+                true
+            )
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    delete("/posts/{postId}/like/{userId}") {
+        try {
+            postsRepository.likePost(
+                call.parameters["postId"].toString(),
+                call.parameters["userId"].toString(),
+                false
+            )
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    post("/posts/{postId}/bookmark/{userId}") {
+        try {
+            postsRepository.bookmarkPost(
+                call.parameters["postId"].toString(),
+                call.parameters["userId"].toString(),
+                true
+            )
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    delete("/posts/{postId}/bookmark/{userId}") {
+        try {
+            postsRepository.bookmarkPost(
+                call.parameters["postId"].toString(),
+                call.parameters["userId"].toString(),
+                false
+            )
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts/{postId}/comments") {
+        try {
+            postsRepository.getPostComments(call.parameters["postId"].toString())
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    post<CommentDTO>("/posts/{postId}/comments/{userId}") { body ->
+        try {
+            postsRepository.createPostComment(
+                call.parameters["postId"].toString(),
+                call.parameters["userId"].toString(),
+                body
+            )
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    put<CommentDTO>("/posts/comments/{commentId}") { body ->
+        try {
+            postsRepository.updatePostComment(call.parameters["commentId"].toString(), body)
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    delete("/posts/comments/{commentId}") {
+        try {
+            postsRepository.deletePostComment(call.parameters["commentId"].toString())
             call.respondSuccess(Unit)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())

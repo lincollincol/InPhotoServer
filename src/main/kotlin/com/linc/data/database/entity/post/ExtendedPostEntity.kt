@@ -1,4 +1,4 @@
-package com.linc.data.database.entity
+package com.linc.data.database.entity.post
 
 data class ExtendedPostEntity(
     val id: String,
@@ -8,5 +8,9 @@ data class ExtendedPostEntity(
     val username: String,
     val userAvatarUrl: String?,
     val userId: String,
+    val isLiked: Boolean,
+    val isBookmarked: Boolean,
+    val likesCount: Int,
+    val commentsCount: Int,
     val tags: List<TagEntity>
 )

@@ -1,6 +1,6 @@
 package com.linc.data.database.mapper
 
-import com.linc.data.database.entity.CredentialsEntity
+import com.linc.data.database.entity.auth.CredentialsEntity
 import com.linc.data.database.table.CredentialsTable
 import org.jetbrains.exposed.sql.ResultRow
 

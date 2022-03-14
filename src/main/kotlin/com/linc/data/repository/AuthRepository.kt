@@ -2,9 +2,9 @@ package com.linc.data.repository
 
 import com.linc.data.database.dao.CredentialsDao
 import com.linc.data.database.dao.UserDao
+import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.network.dto.request.auth.SignInDTO
 import com.linc.data.network.dto.request.auth.SignUpDTO
-import com.linc.data.database.entity.UserExtendedEntity
 import com.linc.utils.JWTUtils
 import com.linc.utils.extensions.toUUID
 

@@ -1,4 +1,4 @@
-package com.linc.data.database.entity
+package com.linc.data.database.entity.post
 
 data class TagEntity(
     val id: String,

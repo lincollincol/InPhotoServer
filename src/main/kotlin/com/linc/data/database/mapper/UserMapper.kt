@@ -1,7 +1,7 @@
 package com.linc.data.database.mapper
 
-import com.linc.data.database.entity.UserEntity
-import com.linc.data.database.entity.UserExtendedEntity
+import com.linc.data.database.entity.user.UserEntity
+import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.database.table.CredentialsTable
 import com.linc.data.database.table.UsersTable
 import org.jetbrains.exposed.sql.ResultRow

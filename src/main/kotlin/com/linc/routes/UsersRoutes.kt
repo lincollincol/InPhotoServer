@@ -5,6 +5,7 @@ import com.linc.data.network.dto.request.users.UpdateStatusDTO
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.MediaRepository
+import com.linc.data.repository.PostsRepository
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.errorMessage
 import com.linc.utils.extensions.getFileData
@@ -18,13 +19,12 @@ import org.koin.ktor.ext.inject
 fun Route.users() {
 
     val usersRepository: UsersRepository by inject()
-//    val imageUtils: ImageUtils by inject()
     val mediaRepository: MediaRepository by inject()
-//    val contentManager: ContentManager by inject()
+    val postsRepository: PostsRepository by inject()
 
-    post<UpdateNameDTO>("/users/update-name/{id}") { request ->
+    post<UpdateNameDTO>("/users/{userId}/username") { request ->
         try {
-            val userId = call.parameters["id"].toString()
+            val userId = call.parameters["userId"].toString()
             usersRepository.updateUserName(userId, request)
             call.respondSuccess(Unit)
         } catch (e: Exception) {
@@ -32,9 +32,9 @@ fun Route.users() {
         }
     }
 
-    post<UpdateStatusDTO>("/users/update-status/{id}") { request ->
+    post<UpdateStatusDTO>("/users/{userId}/status") { request ->
         try {
-            val userId = call.parameters["id"].toString()
+            val userId = call.parameters["userId"].toString()
             usersRepository.updateUserStatus(userId, request)
             call.respondSuccess(Unit)
         } catch (e: Exception) {
@@ -42,9 +42,9 @@ fun Route.users() {
         }
     }
 
-    post<UpdateVisibilityDTO>("/users/update-visibility/{id}") { request ->
+    post<UpdateVisibilityDTO>("/users/{userId}/visibility") { request ->
         try {
-            val userId = call.parameters["id"].toString()
+            val userId = call.parameters["userId"].toString()
             usersRepository.updateUserVisibility(userId, request)
             call.respondSuccess(Unit)
         } catch (e: Exception) {
@@ -52,9 +52,9 @@ fun Route.users() {
         }
     }
 
-    post("/users/update-avatar/{id}") { request ->
+    post("/users/{userId}/avatar") { request ->
         try {
-            val userId = call.parameters["id"].toString()
+            val userId = call.parameters["userId"].toString()
             val data = call.receiveMultipart().getFileData()
             val imageUrl: String? = data?.let { mediaRepository.uploadAvatar(it) }
 
@@ -70,10 +70,11 @@ fun Route.users() {
         }
     }
 
-    post("/users/get-avatar/{id}") {
+    get("/users/{userId}/posts") {
         try {
-            val userId = call.parameters["id"].toString()
-            call.respondSuccess(usersRepository.getUserAvatar(userId).toString())
+            val userId = call.parameters["userId"].toString()
+            val posts = postsRepository.getUserPosts(userId)
+            call.respondSuccess(posts)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }

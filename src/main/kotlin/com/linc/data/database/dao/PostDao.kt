@@ -3,10 +3,7 @@ package com.linc.data.database.dao
 import com.linc.data.database.SqlExecutor
 import com.linc.data.database.mapper.toExtendedPostEntity
 import com.linc.data.database.mapper.toTagEntity
-import com.linc.data.database.table.PostTagTable
-import com.linc.data.database.table.PostsTable
-import com.linc.data.database.table.TagsTable
-import com.linc.data.database.table.UsersTable
+import com.linc.data.database.table.*
 import org.jetbrains.exposed.sql.*
 import org.joda.time.DateTime
 import java.util.*
@@ -42,22 +39,67 @@ class PostDao {
         PostsTable.innerJoin(UsersTable)
             .select { PostsTable.userId eq userId }
             .map { result ->
-                val postTagId = result[PostsTable.id]
+                val postId = result[PostsTable.id]
+
+                val comments = CommentsTable.select { CommentsTable.postId eq postId }
+                val likes = LikesTable.select { LikesTable.postId eq postId }
+                val bookmarks = BookmarksTable.select { BookmarksTable.postId eq postId }
                 val tags = PostTagTable.innerJoin(TagsTable)
-                    .select { PostTagTable.postId eq postTagId }
+                    .select { PostTagTable.postId eq postId }
                     .map(ResultRow::toTagEntity)
-                result.toExtendedPostEntity(tags)
+
+                result.toExtendedPostEntity(
+                    likes.count(),
+                    comments.count(),
+                    likes.firstOrNull { it[LikesTable.userId] == userId } != null,
+                    bookmarks.firstOrNull { it[BookmarksTable.userId] == userId } != null,
+                    tags
+                )
             }
     }
 
-    suspend fun getPostById(postId: UUID) = SqlExecutor.executeQuery {
-        val rawPost = PostsTable.innerJoin(UsersTable)
+    suspend fun getPostsByPostId(userId: UUID) = SqlExecutor.executeQuery {
+        PostsTable.innerJoin(UsersTable)
+            .selectAll()
+            .map { result ->
+                val postId = result[PostsTable.id]
+
+                val comments = CommentsTable.select { CommentsTable.postId eq postId }
+                val likes = LikesTable.select { LikesTable.postId eq postId }
+                val bookmarks = BookmarksTable.select { BookmarksTable.postId eq postId }
+                val tags = PostTagTable.innerJoin(TagsTable)
+                    .select { PostTagTable.postId eq postId }
+                    .map(ResultRow::toTagEntity)
+
+                result.toExtendedPostEntity(
+                    likes.count(),
+                    comments.count(),
+                    likes.firstOrNull { it[LikesTable.userId] == userId } != null,
+                    bookmarks.firstOrNull { it[BookmarksTable.userId] == userId } != null,
+                    tags
+                )
+            }
+    }
+
+    suspend fun getPostByPostId(postId: UUID, userId: UUID) = SqlExecutor.executeQuery {
+        val result = PostsTable.innerJoin(UsersTable)
             .select { PostsTable.id eq postId }
             .firstOrNull()
+
+        val comments = CommentsTable.select { CommentsTable.postId eq postId }
+        val likes = LikesTable.select { LikesTable.postId eq postId }
+        val bookmarks = BookmarksTable.select { BookmarksTable.postId eq postId }
         val tags = PostTagTable.innerJoin(TagsTable)
             .select { PostTagTable.postId eq postId }
             .map(ResultRow::toTagEntity)
-        return@executeQuery rawPost?.toExtendedPostEntity(tags)
+
+        result?.toExtendedPostEntity(
+            likes.count(),
+            comments.count(),
+            likes.firstOrNull { it[LikesTable.userId] == userId } != null,
+            bookmarks.firstOrNull { it[BookmarksTable.userId] == userId } != null,
+            tags
+        )
     }
 
     suspend fun deletePost(postId: UUID) = SqlExecutor.executeQuery {

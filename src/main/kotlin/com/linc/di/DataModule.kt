@@ -20,6 +20,9 @@ val dataModule = module {
     single<DatabaseManager> { DatabaseManager(provideJdbcUrl()) }
     single<CredentialsDao> { CredentialsDao() }
     single<UserDao> { UserDao() }
+    single<CommentDao> { CommentDao() }
+    single<LikeDao> { LikeDao() }
+    single<BookmarkDao> { BookmarkDao() }
     single<PostDao> { PostDao() }
     single<TagDao> { TagDao() }
     single<PostTagDao> { PostTagDao() }
@@ -28,7 +31,7 @@ val dataModule = module {
     single<AuthRepository> { AuthRepository(get(), get(), get()) }
     single<UsersRepository> { UsersRepository(get()) }
     single<MediaRepository> { MediaRepository(get()) }
-    single<PostsRepository> { PostsRepository(get(), get(), get()) }
+    single<PostsRepository> { PostsRepository(get(), get(), get(), get(), get(), get()) }
 
     // Remote api
     single<ContentManager> { ContentManager(get()) }
