@@ -2,12 +2,12 @@ package com.linc.data.database.dao
 
 import com.linc.data.database.SqlExecutor
 import com.linc.data.database.mapper.toExtendedPostEntity
-import com.linc.data.database.mapper.toPostEntity
+import com.linc.data.database.mapper.toTagEntity
 import com.linc.data.database.table.PostTagTable
 import com.linc.data.database.table.PostsTable
+import com.linc.data.database.table.TagsTable
 import com.linc.data.database.table.UsersTable
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.*
 import org.joda.time.DateTime
 import java.util.*
 
@@ -27,20 +27,41 @@ class PostDao {
         } get PostsTable.id
     }
 
+    suspend fun updatePost(
+        postId: UUID,
+        contentUrl: String,
+        description: String
+    ) = SqlExecutor.executeQuery {
+        PostsTable.update(where = { PostsTable.id eq postId }) { table ->
+            table[PostsTable.contentUrl] = contentUrl
+            table[PostsTable.description] = description
+        }
+    }
+
     suspend fun getPostsByUserId(userId: UUID) = SqlExecutor.executeQuery {
         PostsTable.innerJoin(UsersTable)
             .select { PostsTable.userId eq userId }
             .map { result ->
-                val postId = result[PostsTable.id]
-                val tagsCount = PostTagTable.select { PostTagTable.postId eq postId }.count()
-                result.toExtendedPostEntity(tagsCount)
+                val postTagId = result[PostsTable.id]
+                val tags = PostTagTable.innerJoin(TagsTable)
+                    .select { PostTagTable.postId eq postTagId }
+                    .map(ResultRow::toTagEntity)
+                result.toExtendedPostEntity(tags)
             }
     }
 
     suspend fun getPostById(postId: UUID) = SqlExecutor.executeQuery {
-        PostsTable.select { PostsTable.id eq postId }
+        val rawPost = PostsTable.innerJoin(UsersTable)
+            .select { PostsTable.id eq postId }
             .firstOrNull()
-            ?.toPostEntity()
+        val tags = PostTagTable.innerJoin(TagsTable)
+            .select { PostTagTable.postId eq postId }
+            .map(ResultRow::toTagEntity)
+        return@executeQuery rawPost?.toExtendedPostEntity(tags)
+    }
+
+    suspend fun deletePost(postId: UUID) = SqlExecutor.executeQuery {
+        PostsTable.deleteWhere { PostsTable.id eq postId }
     }
 
 }

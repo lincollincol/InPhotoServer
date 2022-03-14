@@ -28,6 +28,13 @@ class TagDao {
     suspend fun createTag(
         tag: String
     ) = SqlExecutor.executeQuery {
+        val tagResultRow = TagsTable.select { TagsTable.tag eq tag }
+            .firstOrNull()
+
+        if (tagResultRow != null) {
+            return@executeQuery tagResultRow[TagsTable.id]
+        }
+
         TagsTable.insert { table ->
             table[TagsTable.id] = UUID.randomUUID()
             table[TagsTable.tag] = tag

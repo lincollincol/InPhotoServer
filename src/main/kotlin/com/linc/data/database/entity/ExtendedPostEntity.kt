@@ -8,5 +8,5 @@ data class ExtendedPostEntity(
     val username: String,
     val userAvatarUrl: String?,
     val userId: String,
-    val tagsCount: Int
+    val tags: List<TagEntity>
 )

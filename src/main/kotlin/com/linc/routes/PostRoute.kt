@@ -1,7 +1,6 @@
 package com.linc.routes
 
-import com.linc.data.network.dto.request.post.CreatePostDTO
-import com.linc.data.network.dto.request.post.CreatePostDTO2
+import com.linc.data.network.dto.request.post.PostDTO2
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.utils.extensions.errorMessage
@@ -34,11 +33,17 @@ fun Route.posts() {
         }
     }
 
-    get("/user-post/{postId}") {
-
+    get("/posts/{postId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val posts = postsRepository.getUserPosts(userId)
+            call.respondSuccess(posts)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
     }
 
-    post<CreatePostDTO2>("/post") { request ->
+    post<PostDTO2>("/posts") { request ->
         try {
             postsRepository.createPost(request.url, request)
             call.respondSuccess(Unit)
@@ -47,16 +52,24 @@ fun Route.posts() {
         }
     }
 
-    delete("/posts/{id}") {
+    put<PostDTO2>("/posts/{postId}") { request ->
         try {
-
+            val postId = call.parameters["postId"].toString()
+            postsRepository.updatePost(postId, request)
+            call.respondSuccess(Unit)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
     }
 
-    put<CreatePostDTO>("/post/{id}") {
-
+    delete("/posts/{postId}") {
+        try {
+            val postId = call.parameters["postId"].toString()
+            postsRepository.deletePost(postId)
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
     }
 
 }
