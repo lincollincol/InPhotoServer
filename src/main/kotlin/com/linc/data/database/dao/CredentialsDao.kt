@@ -1,10 +1,9 @@
 package com.linc.data.database.dao
 
 import com.linc.data.database.SqlExecutor
+import com.linc.data.database.mapper.toCredentialsEntity
 import com.linc.data.database.table.CredentialsTable
-import com.linc.data.database.toCredentialsEntity
-import com.linc.data.dto.request.auth.SignUpRequestDTO
-import com.linc.entity.CredentialsEntity
+import com.linc.data.network.dto.request.auth.SignUpDTO
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.joda.time.DateTime
@@ -14,22 +13,22 @@ class CredentialsDao {
 
     suspend fun createAccount(
         userId: UUID,
-        signUpRequestDTO: SignUpRequestDTO
+        signUpDTO: SignUpDTO,
+        token: String
     ) = SqlExecutor.executeQuery {
         CredentialsTable.insert {
             it[CredentialsTable.id] = UUID.randomUUID()
-            it[CredentialsTable.email] = signUpRequestDTO.email
-            it[CredentialsTable.password] = signUpRequestDTO.password
+            it[CredentialsTable.password] = signUpDTO.password
             it[CredentialsTable.createdTimestamp] = DateTime.now()
+            it[CredentialsTable.accessToken] = token
             it[CredentialsTable.userId] = userId
         } get CredentialsTable.id
     }
 
-    suspend fun getAccountByEmail(email: String) = SqlExecutor.executeQuery {
+    suspend fun getCredentialsByUserId(userId: UUID) = SqlExecutor.executeQuery {
         CredentialsTable.select {
-            CredentialsTable.email eq email
+            CredentialsTable.userId eq userId
         }.firstOrNull()?.toCredentialsEntity()
-//        collection?.toCredentialsEntity()
     }
 
     suspend fun getAccountById(accountId: UUID) = SqlExecutor.executeQuery {
