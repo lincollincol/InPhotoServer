@@ -1,1 +1,1 @@
-web: ./build/install/KtorInstagram/bin/KtorInstagram
+web: java -jar build/libs/com.linc.ktorinstagram-0.0.1.jar
