@@ -12,5 +12,5 @@ data class ExtendedPostEntity(
     val isBookmarked: Boolean,
     val likesCount: Int,
     val commentsCount: Int,
-    val tags: List<TagEntity>
+    val tags: List<String>
 )

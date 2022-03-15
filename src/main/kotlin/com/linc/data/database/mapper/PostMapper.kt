@@ -2,7 +2,6 @@ package com.linc.data.database.mapper
 
 import com.linc.data.database.entity.post.ExtendedPostEntity
 import com.linc.data.database.entity.post.PostEntity
-import com.linc.data.database.entity.post.TagEntity
 import com.linc.data.database.table.PostsTable
 import com.linc.data.database.table.UsersTable
 import org.jetbrains.exposed.sql.ResultRow
@@ -20,7 +19,7 @@ fun ResultRow.toExtendedPostEntity(
     commentsCount: Int,
     isLiked: Boolean,
     isBookmarked: Boolean,
-    tags: List<TagEntity>
+    tags: List<String>
 ) = ExtendedPostEntity(
     id = get(PostsTable.id).toString(),
     createdTimestamp = get(PostsTable.createdTimestamp).millis,

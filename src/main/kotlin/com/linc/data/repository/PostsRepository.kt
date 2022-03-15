@@ -2,6 +2,7 @@ package com.linc.data.repository
 
 import com.linc.data.database.dao.*
 import com.linc.data.database.entity.post.ExtendedPostEntity
+import com.linc.data.database.entity.post.PostEntity
 import com.linc.data.network.dto.request.post.CommentDTO
 import com.linc.data.network.dto.request.post.PostDTO2
 import com.linc.utils.extensions.toUUID
@@ -61,26 +62,45 @@ class PostsRepository(
         }.awaitAll()
     }
 
-    suspend fun getUserPosts(
+    suspend fun getUserExtendedPosts(
         userId: String
     ): List<ExtendedPostEntity> = withContext(Dispatchers.IO) {
-        return@withContext postDao.getPostsByUserId(userId.toUUID()).getOrNull()
+        return@withContext postDao.getExtendedPostsByUserId(userId.toUUID()).getOrNull()
             ?: throw Exception("Cannot load user posts!")
     }
 
-    suspend fun getPosts(
+    suspend fun getExtendedPosts(
         userId: String
     ): List<ExtendedPostEntity> = withContext(Dispatchers.IO) {
-        return@withContext postDao.getPostsByPostId(userId.toUUID()).getOrNull()
+        return@withContext postDao.getExtendedPosts(userId.toUUID()).getOrNull()
+            ?: throw Exception("Posts not found!")
+    }
+
+    suspend fun getExtendedPost(
+        postId: String,
+        userId: String
+    ): ExtendedPostEntity = withContext(Dispatchers.IO) {
+        return@withContext postDao.getExtendedPostByPostId(postId.toUUID(), userId.toUUID()).getOrNull()
+            ?: throw Exception("Post not found!")
+    }
+
+    suspend fun getPosts(): List<PostEntity> = withContext(Dispatchers.IO) {
+        return@withContext postDao.getPosts().getOrNull()
             ?: throw Exception("Posts not found!")
     }
 
     suspend fun getPost(
-        postId: String,
-        userId: String
-    ): ExtendedPostEntity = withContext(Dispatchers.IO) {
-        return@withContext postDao.getPostByPostId(postId.toUUID(), userId.toUUID()).getOrNull()
+        postId: String
+    ): PostEntity = withContext(Dispatchers.IO) {
+        return@withContext postDao.getPostByPostId(postId.toUUID()).getOrNull()
             ?: throw Exception("Post not found!")
+    }
+
+    suspend fun getUserPosts(
+        userId: String
+    ): List<PostEntity> = withContext(Dispatchers.IO) {
+        return@withContext postDao.getPostsByUserId(userId.toUUID()).getOrNull()
+            ?: throw Exception("Cannot load user posts!")
     }
 
     suspend fun deletePost(

@@ -16,11 +16,47 @@ fun Route.posts() {
     val postsRepository: PostsRepository by inject()
     val mediaRepository: MediaRepository by inject()
 
-    get("/posts/{postId}") {
+    get("/posts-extended/users/{userId}") {
         try {
             val userId = call.parameters["userId"].toString()
-            val posts = postsRepository.getUserPosts(userId)
-            call.respondSuccess(posts)
+            call.respondSuccess(postsRepository.getUserExtendedPosts(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts/users/{userId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(postsRepository.getUserPosts(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts/{postId}") {
+        try {
+            val postId = call.parameters["postId"].toString()
+            call.respondSuccess(postsRepository.getPost(postId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts-extended/{postId}/{userId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val postId = call.parameters["postId"].toString()
+            call.respondSuccess(postsRepository.getExtendedPost(postId, userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts-extended/{userId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(postsRepository.getExtendedPosts(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }

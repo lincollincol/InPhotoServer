@@ -70,14 +70,4 @@ fun Route.users() {
         }
     }
 
-    get("/users/{userId}/posts") {
-        try {
-            val userId = call.parameters["userId"].toString()
-            val posts = postsRepository.getUserPosts(userId)
-            call.respondSuccess(posts)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }
-
 }
