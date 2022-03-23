@@ -27,11 +27,9 @@ class PostDao {
 
     suspend fun updatePost(
         postId: UUID,
-        contentUrl: String,
         description: String
     ) = SqlExecutor.executeQuery {
         PostsTable.update(where = { PostsTable.id eq postId }) { table ->
-            table[PostsTable.contentUrl] = contentUrl
             table[PostsTable.description] = description
         }
     }
@@ -73,6 +71,17 @@ class PostDao {
             .firstOrNull()
             ?: return@executeQuery null
         return@executeQuery getExtendedPost(row, userId)
+    }
+
+    suspend fun getExtendedPostByPostId2(postId: UUID, userId: UUID) = SqlExecutor.executeQuery {
+        val row = PostsTable.fullJoin(UsersTable)
+            .fullJoin(CommentsTable)
+            .fullJoin(LikesTable)
+            .fullJoin(BookmarksTable)
+//            .select { PostsTable.id eq postId }
+//            .firstOrNull()
+        return@executeQuery null
+//        return@executeQuery getExtendedPost(row, userId)
     }
 
     suspend fun deletePost(postId: UUID) = SqlExecutor.executeQuery {

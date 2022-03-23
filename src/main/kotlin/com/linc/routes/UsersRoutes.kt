@@ -8,10 +8,10 @@ import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.errorMessage
-import com.linc.utils.extensions.getFileData
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
+import io.ktor.http.content.*
 import io.ktor.request.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
@@ -55,8 +55,11 @@ fun Route.users() {
     post("/users/{userId}/avatar") { request ->
         try {
             val userId = call.parameters["userId"].toString()
-            val data = call.receiveMultipart().getFileData()
-            val imageUrl: String? = data?.let { mediaRepository.uploadAvatar(it) }
+            val data = call.receiveMultipart()
+                .readAllParts()
+                .filterIsInstance<PartData.FileItem>()
+                .firstOrNull()
+            val imageUrl: String? = data?.let { mediaRepository.uploadAvatar(it.streamProvider()) }
 
             if (imageUrl == null) {
                 call.respondFailure("Image not found!")

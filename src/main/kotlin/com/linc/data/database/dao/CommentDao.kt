@@ -40,4 +40,8 @@ class CommentDao {
     suspend fun deleteComment(commentId: UUID) = SqlExecutor.executeQuery {
         CommentsTable.deleteWhere { CommentsTable.id eq commentId }
     }
+
+    suspend fun deleteCommentsByPostId(postId: UUID) = SqlExecutor.executeQuery {
+        CommentsTable.deleteWhere { CommentsTable.postId eq postId }
+    }
 }

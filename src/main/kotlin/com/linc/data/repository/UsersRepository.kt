@@ -27,6 +27,11 @@ class UsersRepository(
             ?: throw Exception("Avatar not found!")
     }
 
+    suspend fun getUsers(): List<UserEntity> {
+        return usersDao.getUsers().getOrNull()
+            ?: throw Exception("Cannot load users!")
+    }
+
     suspend fun updateUserName(userId: String, request: UpdateNameDTO) {
         val name = request.name
 
