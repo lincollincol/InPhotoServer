@@ -1,13 +1,15 @@
 package com.linc.routes
 
 import com.linc.data.network.dto.request.post.CommentDTO
-import com.linc.data.network.dto.request.post.PostDTO2
+import com.linc.data.network.dto.request.post.UpdatePostDTO
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.utils.extensions.errorMessage
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
+import io.ktor.http.content.*
+import io.ktor.request.*
 import io.ktor.routing.*
 import org.koin.ktor.ext.inject
 
@@ -53,6 +55,17 @@ fun Route.posts() {
         }
     }
 
+    get("/ppp/{postId}/{userId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val postId = call.parameters["postId"].toString()
+            postsRepository.getExtendedPost2(postId, userId)
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
     get("/posts-extended/{userId}") {
         try {
             val userId = call.parameters["userId"].toString()
@@ -62,21 +75,34 @@ fun Route.posts() {
         }
     }
 
-    post<PostDTO2>("/posts") { request ->
+    post("/posts/{userId}") { request ->
         try {
-            postsRepository.createPost(request.url, request)
-            call.respondSuccess(Unit)
+            val multipartParts = call.receiveMultipart().readAllParts()
+            val data = multipartParts.filterIsInstance<PartData.FileItem>().firstOrNull()
+            val formParameters = multipartParts.filterIsInstance<PartData.FormItem>()
+            val description = formParameters.firstOrNull { it.name == "description" }?.value.orEmpty()
+            val tags = formParameters.filter { it.name == "tag" }.map { it.value }
+            val userId = call.parameters["userId"].toString()
+            val imageUrl: String? = data?.let { mediaRepository.uploadPost(it.streamProvider()) }
+            if (imageUrl == null) {
+                call.respondFailure("Image not found!")
+                return@post
+            }
+            postsRepository.createPost(userId, imageUrl, description, tags)
+            call.respondSuccess(null)
         } catch (e: Exception) {
+            e.printStackTrace()
             call.respondFailure(e.errorMessage())
         }
     }
 
-    put<PostDTO2>("/posts/{postId}") { request ->
+    put<UpdatePostDTO>("/posts/{postId}") { request ->
         try {
             val postId = call.parameters["postId"].toString()
-            postsRepository.updatePost(postId, request)
-            call.respondSuccess(Unit)
+            postsRepository.updatePost(postId, request.description, request.tags)
+            call.respondSuccess(null)
         } catch (e: Exception) {
+            e.printStackTrace()
             call.respondFailure(e.errorMessage())
         }
     }
@@ -93,25 +119,12 @@ fun Route.posts() {
 
     post("/posts/{postId}/like/{userId}") {
         try {
-            postsRepository.likePost(
+            val updatedPost = postsRepository.likePost(
                 call.parameters["postId"].toString(),
                 call.parameters["userId"].toString(),
-                true
+                call.parameters["liked"].toBoolean(),
             )
-            call.respondSuccess(Unit)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }
-
-    delete("/posts/{postId}/like/{userId}") {
-        try {
-            postsRepository.likePost(
-                call.parameters["postId"].toString(),
-                call.parameters["userId"].toString(),
-                false
-            )
-            call.respondSuccess(Unit)
+            call.respondSuccess(updatedPost)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
@@ -119,25 +132,12 @@ fun Route.posts() {
 
     post("/posts/{postId}/bookmark/{userId}") {
         try {
-            postsRepository.bookmarkPost(
+            val updatedPost = postsRepository.bookmarkPost(
                 call.parameters["postId"].toString(),
                 call.parameters["userId"].toString(),
-                true
+                call.parameters["bookmarked"].toBoolean(),
             )
-            call.respondSuccess(Unit)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }
-
-    delete("/posts/{postId}/bookmark/{userId}") {
-        try {
-            postsRepository.bookmarkPost(
-                call.parameters["postId"].toString(),
-                call.parameters["userId"].toString(),
-                false
-            )
-            call.respondSuccess(Unit)
+            call.respondSuccess(updatedPost)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }

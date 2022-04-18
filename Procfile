@@ -1,0 +1,1 @@
+web: ./build/install/com.linc.ktorinstagram/bin/com.linc.ktorinstagram

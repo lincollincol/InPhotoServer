@@ -3,8 +3,6 @@ package com.linc.data.repository
 import com.linc.data.database.dao.UserDao
 import com.linc.data.database.entity.user.UserEntity
 import com.linc.data.database.entity.user.UserExtendedEntity
-import com.linc.data.network.dto.request.users.UpdateNameDTO
-import com.linc.data.network.dto.request.users.UpdateStatusDTO
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import java.util.*
 
@@ -27,13 +25,17 @@ class UsersRepository(
             ?: throw Exception("Avatar not found!")
     }
 
-    suspend fun updateUserName(userId: String, request: UpdateNameDTO) {
-        val name = request.name
+    suspend fun getUsers(): List<UserEntity> {
+        return usersDao.getUsers().getOrNull()
+            ?: throw Exception("Cannot load users!")
+    }
 
+    suspend fun updateUserName(userId: String, name: String?) {
         val errorMessage = when {
-            name.isEmpty() -> "User name is empty!"
+            name.isNullOrEmpty() -> "User name is empty!"
             name.first().isDigit() -> "Name cannot start with a number!"
             name.first().isWhitespace() -> "Name cannot start with a space!"
+            usersDao.userWithNameExist(name).getOrNull() != null -> "User with this name already exists!"
             else -> null
         }
 
@@ -41,12 +43,12 @@ class UsersRepository(
             throw Exception(errorMessage)
         }
 
-        usersDao.updateUserName(UUID.fromString(userId), name).getOrNull()
-            ?: throw Exception("Can not update user name!")
+        usersDao.updateUserName(UUID.fromString(userId), name!!).getOrNull()
+            ?: throw Exception("Can't update user name!")
     }
 
-    suspend fun updateUserStatus(userId: String, request: UpdateStatusDTO) {
-        usersDao.updateUserName(UUID.fromString(userId), request.status).getOrNull()
+    suspend fun updateUserStatus(userId: String, status: String?) {
+        usersDao.updateUserStatus(UUID.fromString(userId), status.orEmpty()).getOrNull()
             ?: throw Exception("Can not update user status!")
     }
 

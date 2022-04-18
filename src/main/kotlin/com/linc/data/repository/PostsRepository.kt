@@ -4,13 +4,11 @@ import com.linc.data.database.dao.*
 import com.linc.data.database.entity.post.ExtendedPostEntity
 import com.linc.data.database.entity.post.PostEntity
 import com.linc.data.network.dto.request.post.CommentDTO
-import com.linc.data.network.dto.request.post.PostDTO2
 import com.linc.utils.extensions.toUUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class PostsRepository(
     private val postDao: PostDao,
@@ -22,18 +20,17 @@ class PostsRepository(
 ) {
 
     suspend fun createPost(
+        userId: String,
         contentUrl: String,
-        request: PostDTO2
+        description: String,
+        tags: List<String>
     ) = withContext(Dispatchers.IO) {
-        val tagsIds = request.tags.map { tag ->
+        val tagsIds = tags.map { tag ->
             async { tagDao.createTag(tag).getOrNull() }
         }
 
-        val postId = postDao.createPost(
-            UUID.fromString(request.userId),
-            contentUrl,
-            request.description
-        ).getOrNull() ?: throw Exception("Cannot create post!")
+        val postId = postDao.createPost(userId.toUUID(), contentUrl, description)
+            .getOrNull() ?: throw Exception("Cannot create post!")
 
         tagsIds.awaitAll()
             .filterNotNull()
@@ -45,15 +42,16 @@ class PostsRepository(
 
     suspend fun updatePost(
         postId: String,
-        request: PostDTO2
+        description: String,
+        tags: List<String>
     ) = withContext(Dispatchers.IO) {
-        postDao.updatePost(postId.toUUID(), request.url, request.description).getOrNull()
+        postDao.updatePost(postId.toUUID(), description).getOrNull()
             ?: throw Exception("Cannot update post!")
 
         postTagDao.deletePostTagByPostId(postId.toUUID()).getOrNull()
             ?: throw Exception("Cannot delete post tags!")
 
-        request.tags.map { tag ->
+        tags.map { tag ->
             async {
                 tagDao.createTag(tag).getOrNull()?.let {
                     postTagDao.createPostTag(it, postId.toUUID())
@@ -84,6 +82,15 @@ class PostsRepository(
             ?: throw Exception("Post not found!")
     }
 
+    suspend fun getExtendedPost2(
+        postId: String,
+        userId: String
+    ) = withContext(Dispatchers.IO) {
+        postDao.getExtendedPostByPostId2(postId.toUUID(), userId.toUUID()).getOrNull()
+            ?: throw Exception("Post not found!")
+        return@withContext
+    }
+
     suspend fun getPosts(): List<PostEntity> = withContext(Dispatchers.IO) {
         return@withContext postDao.getPosts().getOrNull()
             ?: throw Exception("Posts not found!")
@@ -103,9 +110,10 @@ class PostsRepository(
             ?: throw Exception("Cannot load user posts!")
     }
 
-    suspend fun deletePost(
-        postId: String
-    ) = withContext(Dispatchers.IO) {
+    suspend fun deletePost(postId: String) = withContext(Dispatchers.IO) {
+        likeDao.deleteLikes(postId.toUUID()).getOrNull() ?: throw Exception("Cannot delete likes!")
+        commentDao.deleteComment(postId.toUUID()).getOrNull() ?: throw Exception("Cannot delete comments!")
+        postTagDao.deletePostTagByPostId(postId.toUUID()).getOrNull() ?: throw Exception("Cannot delete tags!")
         postDao.deletePost(postId.toUUID()).getOrNull() ?: throw Exception("Post not found!")
     }
 
@@ -142,22 +150,24 @@ class PostsRepository(
         postId: String,
         userId: String,
         isLiked: Boolean
-    ) = withContext(Dispatchers.IO) {
+    ): ExtendedPostEntity = withContext(Dispatchers.IO) {
         when {
             isLiked -> likeDao.createLike(postId.toUUID(), userId.toUUID())
             else -> likeDao.deleteLike(postId.toUUID(), userId.toUUID())
         }.getOrNull() ?: throw Exception("Cannot process like operation!")
+        return@withContext getExtendedPost(postId, userId)
     }
 
     suspend fun bookmarkPost(
         postId: String,
         userId: String,
         isBookmarked: Boolean
-    ) = withContext(Dispatchers.IO) {
+    ): ExtendedPostEntity = withContext(Dispatchers.IO) {
         when {
             isBookmarked -> bookmarkDao.createBookmark(postId.toUUID(), userId.toUUID())
             else -> bookmarkDao.deleteBookmark(postId.toUUID(), userId.toUUID())
         }.getOrNull() ?: throw Exception("Cannot process bookmark operation!")
+        return@withContext getExtendedPost(postId, userId)
     }
 
 }

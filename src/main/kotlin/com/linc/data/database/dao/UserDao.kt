@@ -21,6 +21,17 @@ class UserDao {
         } get UsersTable.id
     }
 
+    suspend fun userWithNameExist(
+        username: String
+    ) = SqlExecutor.executeQuery {
+        UsersTable.select { UsersTable.name eq username }
+            .singleOrNull()
+    }
+
+    suspend fun getUsers() = SqlExecutor.executeQuery {
+        UsersTable.selectAll().map { it.toUserEntity() }
+    }
+
     suspend fun getExtendedUserById(userId: UUID) = SqlExecutor.executeQuery {
         CredentialsTable.innerJoin(UsersTable)
             .select { UsersTable.id eq userId }
