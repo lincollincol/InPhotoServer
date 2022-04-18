@@ -1,13 +1,12 @@
 package com.linc.routes
 
-import com.linc.data.network.dto.request.users.UpdateNameDTO
-import com.linc.data.network.dto.request.users.UpdateStatusDTO
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.errorMessage
+import com.linc.utils.extensions.removeQuotes
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
@@ -22,20 +21,20 @@ fun Route.users() {
     val mediaRepository: MediaRepository by inject()
     val postsRepository: PostsRepository by inject()
 
-    post<UpdateNameDTO>("/users/{userId}/username") { request ->
+    post<String>("/users/{userId}/username") { request ->
         try {
             val userId = call.parameters["userId"].toString()
-            usersRepository.updateUserName(userId, request)
+            usersRepository.updateUserName(userId, request.removeQuotes())
             call.respondSuccess(Unit)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
     }
 
-    post<UpdateStatusDTO>("/users/{userId}/status") { request ->
+    post<String>("/users/{userId}/status") { request ->
         try {
             val userId = call.parameters["userId"].toString()
-            usersRepository.updateUserStatus(userId, request)
+            usersRepository.updateUserStatus(userId, request.removeQuotes())
             call.respondSuccess(Unit)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
