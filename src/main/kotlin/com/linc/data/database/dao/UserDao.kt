@@ -10,13 +10,17 @@ import java.util.*
 
 class UserDao {
 
-    suspend fun createEmptyUser(email: String, name: String) = SqlExecutor.executeQuery {
+    suspend fun createEmptyUser(
+        email: String,
+        name: String,
+        avatarUrl: String,
+    ) = SqlExecutor.executeQuery {
         UsersTable.insert { table ->
             table[UsersTable.id] = UUID.randomUUID()
             table[UsersTable.name] = name
             table[UsersTable.email] = email
             table[UsersTable.status] = null
-            table[UsersTable.avatarUrl] = null
+            table[UsersTable.avatarUrl] = avatarUrl
             table[UsersTable.publicAccess] = true
         } get UsersTable.id
     }
