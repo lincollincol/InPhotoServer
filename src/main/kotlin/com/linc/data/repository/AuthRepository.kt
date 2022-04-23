@@ -33,15 +33,11 @@ class AuthRepository(
         return user
     }
 
-    suspend fun signUp(
-        request: SignUpDTO,
-        generatedAvatarUrl: String,
-        generatedHeaderUrl: String
-    ): UserExtendedEntity {
+    suspend fun signUp(request: SignUpDTO): String {
         val userId = userDao.createEmptyUser(
             request.email,
             request.username,
-            avatarUrl = generatedAvatarUrl
+            request.gender.name
         ).getOrNull() ?: throw Exception("Cannot create user!")
 
         credentialsDao.createAccount(
@@ -50,10 +46,7 @@ class AuthRepository(
             jwtUtils.createToken(userId.toString())
         ).getOrNull() ?: throw Exception("Cannot create account!")
 
-        val user = userDao.getExtendedUserById(userId).getOrNull()
-            ?: throw Exception("User not found!")
-
-        return user
+        return userId.toString()
     }
 
 }

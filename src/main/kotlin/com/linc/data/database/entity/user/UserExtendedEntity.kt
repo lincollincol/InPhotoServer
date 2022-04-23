@@ -5,7 +5,9 @@ data class UserExtendedEntity(
     val name: String,
     val email: String,
     val status: String?,
+    val gender: Gender,
     val publicProfile: Boolean,
-    val avatarUrl: String?,
+    val avatarUrl: String,
+    val headerUrl: String,
     val accessToken: String
 )

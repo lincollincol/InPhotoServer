@@ -1,5 +1,6 @@
 package com.linc.routes
 
+import com.linc.data.database.entity.user.Gender
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.MediaRepository
@@ -41,6 +42,16 @@ fun Route.users() {
         }
     }
 
+    post<String>("/users/{userId}/gender") { body ->
+        try {
+            val userId = call.parameters["userId"].toString()
+            usersRepository.updateUserGender(userId, Gender.fromString(body))
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
     post<UpdateVisibilityDTO>("/users/{userId}/visibility") { request ->
         try {
             val userId = call.parameters["userId"].toString()
@@ -58,13 +69,30 @@ fun Route.users() {
                 .readAllParts()
                 .filterIsInstance<PartData.FileItem>()
                 .firstOrNull()
-            val imageUrl: String? = data?.let { mediaRepository.uploadAvatar(it.streamProvider()) }
 
-            if (imageUrl == null) {
-                call.respondFailure("Image not found!")
-                return@post
-            }
+            val imageUrl: String = data?.let { mediaRepository.uploadAvatar(it.streamProvider()) }
+                ?: throw Exception("Image not found!")
+
             usersRepository.updateUserAvatar(userId, imageUrl)
+            val user = usersRepository.getExtendedUserById(userId)
+            call.respondSuccess(user.toUserDto())
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    post("/users/{userId}/header") { request ->
+        try {
+            val userId = call.parameters["userId"].toString()
+            val data = call.receiveMultipart()
+                .readAllParts()
+                .filterIsInstance<PartData.FileItem>()
+                .firstOrNull()
+
+            val imageUrl: String = data?.let { mediaRepository.uploadHeader(it.streamProvider()) }
+                ?: throw Exception("Image not found!")
+
+            usersRepository.updateUserHeader(userId, imageUrl)
             val user = usersRepository.getExtendedUserById(userId)
             call.respondSuccess(user.toUserDto())
         } catch (e: Exception) {
