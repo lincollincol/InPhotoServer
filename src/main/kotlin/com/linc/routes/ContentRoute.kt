@@ -3,7 +3,6 @@ package com.linc.routes
 import com.linc.data.database.entity.user.Gender
 import com.linc.data.repository.MediaRepository
 import com.linc.utils.extensions.errorMessage
-import com.linc.utils.extensions.randomUUID
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
@@ -17,7 +16,7 @@ fun Route.content() {
     get("/content/random-avatar") {
         val gender = Gender.fromString(call.parameters["gender"])
         try {
-            call.respondSuccess(mediaRepository.loadRandomAvatarUrl(randomUUID(), gender))
+            call.respondSuccess(mediaRepository.loadRandomAvatarUrl(gender))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }

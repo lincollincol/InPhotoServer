@@ -19,7 +19,9 @@ class ContentManager(
         AVATAR("avatar"),
         POST("post"),
         HEADER("header"),
-        SYSTEM_HEADER("system/header")
+        SYSTEM_HEADER("system/header"),
+        SYSTEM_AVATAR_MALE("system/avatar/male"),
+        SYSTEM_AVATAR_FEMALE("system/avatar/female")
     }
 
     fun upload(stream: InputStream, directory: Directory): String {

@@ -22,7 +22,7 @@ fun Route.auth() {
     post<SignUpDTO>("/auth/sign-up") { request ->
         try {
             val userId = authRepository.signUp(request)
-            val generatedAvatarUrl = mediaRepository.generateAvatar(request.username, request.gender)
+            val generatedAvatarUrl = mediaRepository.loadRandomAvatarUrl(request.gender)
             val generatedHeaderUrl = mediaRepository.loadRandomHeaderUrl()
             val user = with(userRepository) {
                 updateUserAvatar(userId, generatedAvatarUrl)

@@ -7,7 +7,9 @@ import org.jetbrains.exposed.sql.ResultRow
 
 fun ResultRow.toCommentEntity() = CommentEntity(
     id = get(CommentsTable.id).toString(),
-    text = get(CommentsTable.comment),
+    comment = get(CommentsTable.comment),
+    createdTimestamp = get(CommentsTable.createdTimestamp).millis,
+    userId = get(CommentsTable.userId).toString(),
     username = get(UsersTable.name),
     userAvatarUrl = get(UsersTable.avatarUrl)
 )

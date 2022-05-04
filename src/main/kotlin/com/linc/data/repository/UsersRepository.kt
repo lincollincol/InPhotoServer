@@ -21,6 +21,11 @@ class UsersRepository(
             ?: throw Exception("User not found!")
     }
 
+    suspend fun getExtendedUsers(): List<UserExtendedEntity> {
+        return usersDao.getExtendedUsers().getOrNull()
+            ?: throw Exception("Users not found!")
+    }
+
     suspend fun getUserAvatar(userId: String): String? {
         return usersDao.getUserAvatar(UUID.fromString(userId)).getOrNull()
             ?: throw Exception("Avatar not found!")

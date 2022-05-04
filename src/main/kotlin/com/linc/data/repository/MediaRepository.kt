@@ -16,7 +16,7 @@ class MediaRepository(
     private val avatarManager: AvatarManager,
 ) {
 
-    suspend fun loadRandomAvatarUrl(
+    /*suspend fun loadRandomAvatarUrl(
         seed: String,
         gender: Gender?
     ): String = withContext(Dispatchers.IO) {
@@ -29,7 +29,7 @@ class MediaRepository(
     ): String = withContext(Dispatchers.IO) {
         val avatar = avatarManager.generateAvatar(seed, gender)
         return@withContext contentManager.upload(avatar, ContentManager.Directory.AVATAR)
-    }
+    }*/
 
     suspend fun uploadAvatar(data: InputStream): String = withContext(Dispatchers.IO) {
         return@withContext contentManager.upload(data, ContentManager.Directory.AVATAR)
@@ -47,15 +47,35 @@ class MediaRepository(
         contentManager.loadContentUrls(dir)
     }
 
-    suspend fun loadRandomHeaderUrl() = systemContentDao.getRandomSystemContentByDir(
-        ContentManager.Directory.SYSTEM_HEADER.value
-    ).getOrNull()?.url ?: throw Exception("Cannot load default header!")
+    suspend fun loadRandomHeaderUrl() =
+        systemContentDao.getRandomSystemContentByDir(
+            ContentManager.Directory.SYSTEM_HEADER.value
+        ).getOrNull()?.url ?: throw Exception("Cannot load default header!")
+
+    suspend fun loadRandomAvatarUrl(gender: Gender?) =
+        systemContentDao.getRandomSystemContentByDir(
+            when (gender) {
+                Gender.MALE -> ContentManager.Directory.SYSTEM_AVATAR_MALE.value
+                else -> ContentManager.Directory.SYSTEM_AVATAR_FEMALE.value
+            }
+        ).getOrNull()?.url ?: throw Exception("Cannot load default avatar!")
 
     suspend fun syncWithRemoteSystemDirs() = withContext(Dispatchers.IO) {
-        val directory = ContentManager.Directory.SYSTEM_HEADER
-        contentManager.loadContentUrls(directory).map {
-            async { systemContentDao.insertContentData(directory.value, it) }
+        val directories = listOf(
+            ContentManager.Directory.SYSTEM_HEADER,
+            ContentManager.Directory.SYSTEM_AVATAR_MALE,
+            ContentManager.Directory.SYSTEM_AVATAR_FEMALE
+        )
+        directories.map { directory ->
+            async {
+                contentManager.loadContentUrls(directory).forEach {
+                    systemContentDao.insertContentData(directory.value, it)
+                }
+            }
         }.awaitAll()
+//        contentManager.loadContentUrls(directory).map {
+//            async { systemContentDao.insertContentData(directory.value, it) }
+//        }.awaitAll()
     }
 
 }

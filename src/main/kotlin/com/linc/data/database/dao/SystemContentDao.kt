@@ -3,6 +3,7 @@ package com.linc.data.database.dao
 import com.linc.data.database.SqlExecutor
 import com.linc.data.database.mapper.toSystemContentEntity
 import com.linc.data.database.table.SystemContentTable
+import org.jetbrains.exposed.sql.Random
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
@@ -40,8 +41,10 @@ class SystemContentDao {
         dir: String
     ) = SqlExecutor.executeQuery {
         SystemContentTable.select { SystemContentTable.dir eq dir }
-            .map(ResultRow::toSystemContentEntity)
-            .random()
+            .orderBy(Random())
+            .limit(1)
+            .firstOrNull()
+            ?.toSystemContentEntity()
     }
 
 }

@@ -1,9 +1,9 @@
 package com.linc.data.repository
 
 import com.linc.data.database.dao.*
+import com.linc.data.database.entity.post.CommentEntity
 import com.linc.data.database.entity.post.ExtendedPostEntity
 import com.linc.data.database.entity.post.PostEntity
-import com.linc.data.network.dto.request.post.CommentDTO
 import com.linc.utils.extensions.toUUID
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -117,25 +117,27 @@ class PostsRepository(
         postDao.deletePost(postId.toUUID()).getOrNull() ?: throw Exception("Post not found!")
     }
 
-    suspend fun getPostComments(postId: String) = withContext(Dispatchers.IO) {
-        commentDao.getComments(postId.toUUID()).getOrNull()
+    suspend fun getPostComments(postId: String): List<CommentEntity> = withContext(Dispatchers.IO) {
+        return@withContext commentDao.getCommentsByPost(postId.toUUID()).getOrNull()
             ?: throw Exception("Cannot load post comments!")
     }
 
     suspend fun createPostComment(
         postId: String,
         userId: String,
-        commentDto: CommentDTO
-    ) = withContext(Dispatchers.IO) {
-        commentDao.createComment(postId.toUUID(), userId.toUUID(), commentDto.text).getOrNull()
+        comment: String
+    ): CommentEntity = withContext(Dispatchers.IO) {
+        val commentId = commentDao.createComment(postId.toUUID(), userId.toUUID(), comment).getOrNull()
             ?: throw Exception("Cannot create post comment!")
+        return@withContext commentDao.getCommentById(commentId).getOrNull()
+            ?: throw Exception("Comment not found!")
     }
 
     suspend fun updatePostComment(
         commentId: String,
-        commentDto: CommentDTO
+        comment: String
     ) = withContext(Dispatchers.IO) {
-        commentDao.updateComment(commentId.toUUID(), commentDto.text).getOrNull()
+        commentDao.updateComment(commentId.toUUID(), comment).getOrNull()
             ?: throw Exception("Cannot update post comment!")
     }
 
