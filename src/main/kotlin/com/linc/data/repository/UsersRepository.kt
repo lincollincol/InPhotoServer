@@ -1,6 +1,7 @@
 package com.linc.data.repository
 
 import com.linc.data.database.dao.UserDao
+import com.linc.data.database.entity.user.Gender
 import com.linc.data.database.entity.user.UserEntity
 import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
@@ -18,6 +19,11 @@ class UsersRepository(
     suspend fun getExtendedUserById(userId: String): UserExtendedEntity {
         return usersDao.getExtendedUserById(UUID.fromString(userId)).getOrNull()
             ?: throw Exception("User not found!")
+    }
+
+    suspend fun getExtendedUsers(): List<UserExtendedEntity> {
+        return usersDao.getExtendedUsers().getOrNull()
+            ?: throw Exception("Users not found!")
     }
 
     suspend fun getUserAvatar(userId: String): String? {
@@ -52,6 +58,11 @@ class UsersRepository(
             ?: throw Exception("Can not update user status!")
     }
 
+    suspend fun updateUserGender(userId: String, gender: Gender) {
+        usersDao.updateUserGender(UUID.fromString(userId), gender.name).getOrNull()
+            ?: throw Exception("Can not update user gender!")
+    }
+
     suspend fun updateUserVisibility(userId: String, request: UpdateVisibilityDTO) {
         usersDao.updateUserVisibility(UUID.fromString(userId), request.isPublic).getOrNull()
             ?: throw Exception("Can not update user visibility!")
@@ -60,6 +71,11 @@ class UsersRepository(
     suspend fun updateUserAvatar(userId: String, imageUrl: String) {
         usersDao.updateUserAvatar(UUID.fromString(userId), imageUrl).getOrNull()
             ?: throw Exception("Can not update user avatar!")
+    }
+
+    suspend fun updateUserHeader(userId: String, imageUrl: String) {
+        usersDao.updateUserHeader(UUID.fromString(userId), imageUrl).getOrNull()
+            ?: throw Exception("Can not update user header!")
     }
 
 }

@@ -5,6 +5,8 @@ data class UserEntity(
     val name: String,
     val email: String,
     val status: String?,
+    val gender: Gender,
     val publicProfile: Boolean,
-    val avatarUrl: String?,
+    val avatarUrl: String,
+    val headerUrl: String,
 )

@@ -1,10 +1,10 @@
 package com.linc.routes
 
-import com.linc.data.network.dto.request.post.CommentDTO
 import com.linc.data.network.dto.request.post.UpdatePostDTO
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.utils.extensions.errorMessage
+import com.linc.utils.extensions.extractStringBody
 import com.linc.utils.extensions.respondFailure
 import com.linc.utils.extensions.respondSuccess
 import io.ktor.application.*
@@ -145,29 +145,32 @@ fun Route.posts() {
 
     get("/posts/{postId}/comments") {
         try {
-            postsRepository.getPostComments(call.parameters["postId"].toString())
-            call.respondSuccess(Unit)
+            val comments = postsRepository.getPostComments(call.parameters["postId"].toString())
+            call.respondSuccess(comments)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
     }
 
-    post<CommentDTO>("/posts/{postId}/comments/{userId}") { body ->
+    post<String>("/posts/{postId}/comments/{userId}") { body ->
         try {
-            postsRepository.createPostComment(
+            val commentEntity = postsRepository.createPostComment(
                 call.parameters["postId"].toString(),
                 call.parameters["userId"].toString(),
-                body
+                body.extractStringBody()
             )
-            call.respondSuccess(Unit)
+            call.respondSuccess(commentEntity)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
     }
 
-    put<CommentDTO>("/posts/comments/{commentId}") { body ->
+    put<String>("/posts/comments/{commentId}") { body ->
         try {
-            postsRepository.updatePostComment(call.parameters["commentId"].toString(), body)
+            postsRepository.updatePostComment(
+                call.parameters["commentId"].toString(),
+                body.extractStringBody()
+            )
             call.respondSuccess(Unit)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())

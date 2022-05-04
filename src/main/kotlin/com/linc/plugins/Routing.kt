@@ -18,6 +18,7 @@ fun Application.configureRouting() {
 //        authenticate(AUTH_CONFIG) {
 //        }
 
+        content()
         // Static plugin. Try to access `/static/index.html`
         static("/static") {
             resources("static")

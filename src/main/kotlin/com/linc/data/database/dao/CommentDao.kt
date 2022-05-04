@@ -5,14 +5,22 @@ import com.linc.data.database.mapper.toCommentEntity
 import com.linc.data.database.table.CommentsTable
 import com.linc.data.database.table.UsersTable
 import org.jetbrains.exposed.sql.*
+import org.joda.time.DateTime
 import java.util.*
 
 class CommentDao {
 
-    suspend fun getComments(postId: UUID) = SqlExecutor.executeQuery {
+    suspend fun getCommentsByPost(postId: UUID) = SqlExecutor.executeQuery {
         CommentsTable.innerJoin(UsersTable)
             .select { CommentsTable.postId eq postId }
             .map(ResultRow::toCommentEntity)
+    }
+
+    suspend fun getCommentById(commentId: UUID) = SqlExecutor.executeQuery {
+        CommentsTable.innerJoin(UsersTable)
+            .select { CommentsTable.id eq commentId }
+            .single()
+            .toCommentEntity()
     }
 
     suspend fun createComment(
@@ -22,9 +30,10 @@ class CommentDao {
     ) = SqlExecutor.executeQuery {
         CommentsTable.insert { table ->
             table[CommentsTable.id] = UUID.randomUUID()
+            table[CommentsTable.comment] = comment
+            table[CommentsTable.createdTimestamp] = DateTime.now()
             table[CommentsTable.userId] = userId
             table[CommentsTable.postId] = postId
-            table[CommentsTable.comment] = comment
         } get CommentsTable.id
     }
 

@@ -4,9 +4,10 @@ import org.jetbrains.exposed.sql.Column
 import org.jetbrains.exposed.sql.Table
 import java.util.*
 
-object TagsTable : Table("tags") {
+object SystemContentTable : Table("system_content") {
 
     val id: Column<UUID> = uuid("id").primaryKey()
-    val tag: Column<String> = text("tag").uniqueIndex()
+    val dir: Column<String> = text("dir")
+    val url: Column<String> = text("url").uniqueIndex()
 
 }

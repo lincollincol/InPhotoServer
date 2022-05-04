@@ -1,5 +1,6 @@
 package com.linc.routes
 
+import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.respondSuccess
@@ -15,9 +16,10 @@ fun Route.testRoute() {
 
     val usersRepository: UsersRepository by inject()
     val postsRepository: PostsRepository by inject()
+    val mediaRepository: MediaRepository by inject()
 
     get("/test") {
-        call.respondSuccess("Hi")
+        call.respondSuccess(mediaRepository.loadRandomHeaderUrl())
     }
 
     get("/test2") {

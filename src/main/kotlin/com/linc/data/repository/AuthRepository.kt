@@ -14,39 +14,39 @@ class AuthRepository(
     private val jwtUtils: JWTUtils
 ) {
 
-    suspend fun signIn(request: SignInDTO) : Result<UserExtendedEntity> {
+    suspend fun signIn(request: SignInDTO): UserExtendedEntity {
         var user: UserExtendedEntity? = userDao.getUserByEmail(request.login).getOrNull()
 
-        if(user == null) {
+        if (user == null) {
             user = userDao.getUserByName(request.login).getOrNull()
         }
 
-        user ?: return Result.failure(Exception("User does not exist!"))
+        user ?: throw Exception("User does not exist!")
 
         val credentials = credentialsDao.getCredentialsByUserId(user.id.toUUID()).getOrNull()
-            ?: return Result.failure(Exception("Something went wrong!"))
+            ?: throw Exception("Something went wrong!")
 
-        if(request.password != credentials.password) {
-            return Result.failure(Exception("Invalid password!"))
+        if (request.password != credentials.password) {
+            throw Exception("Invalid password!")
         }
 
-        return Result.success(user)
+        return user
     }
 
-    suspend fun signUp(request: SignUpDTO) : Result<UserExtendedEntity> {
-        val userId = userDao.createEmptyUser(request.email, request.username).getOrNull()
-            ?: return Result.failure(Exception("Cannot create user!"))
+    suspend fun signUp(request: SignUpDTO): String {
+        val userId = userDao.createEmptyUser(
+            request.email,
+            request.username,
+            request.gender.name
+        ).getOrNull() ?: throw Exception("Cannot create user!")
 
         credentialsDao.createAccount(
             userId,
             request,
             jwtUtils.createToken(userId.toString())
-        ).getOrNull() ?: return Result.failure(Exception("Cannot create account!"))
+        ).getOrNull() ?: throw Exception("Cannot create account!")
 
-        val user = userDao.getExtendedUserById(userId).getOrNull()
-            ?: return Result.failure(Exception("User not found!"))
-
-        return Result.success(user)
+        return userId.toString()
     }
 
 }
