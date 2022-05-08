@@ -28,10 +28,11 @@ val dataModule = module {
     single<TagDao> { TagDao() }
     single<PostTagDao> { PostTagDao() }
     single<SystemContentDao> { SystemContentDao() }
+    single<FollowersDao> { FollowersDao() }
 
     // Repositories
     single<AuthRepository> { AuthRepository(get(), get(), get()) }
-    single<UsersRepository> { UsersRepository(get()) }
+    single<UsersRepository> { UsersRepository(get(), get()) }
     single<MediaRepository> { MediaRepository(get(), get(), get()) }
     single<PostsRepository> { PostsRepository(get(), get(), get(), get(), get(), get()) }
 

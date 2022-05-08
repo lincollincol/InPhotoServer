@@ -1,9 +1,7 @@
 package com.linc.routes
 
 import com.linc.data.database.entity.user.Gender
-import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
-import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
 import com.linc.data.repository.UsersRepository
@@ -26,7 +24,6 @@ fun Route.users() {
     get("/users") {
         try {
             val users = usersRepository.getExtendedUsers()
-                .map(UserExtendedEntity::toUserDto)
             call.respondSuccess(users)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
@@ -36,8 +33,7 @@ fun Route.users() {
     get("/users/{userId}") {
         try {
             val userId = call.parameters["userId"].toString()
-            val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
@@ -95,8 +91,7 @@ fun Route.users() {
                 ?: throw Exception("Image not found!")
 
             usersRepository.updateUserAvatar(userId, imageUrl)
-            val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
@@ -114,8 +109,7 @@ fun Route.users() {
                 ?: throw Exception("Image not found!")
 
             usersRepository.updateUserHeader(userId, imageUrl)
-            val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
@@ -125,8 +119,7 @@ fun Route.users() {
         try {
             val userId = call.parameters["userId"].toString()
             usersRepository.updateUserAvatar(userId, body.extractStringBody())
-            val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
@@ -136,11 +129,88 @@ fun Route.users() {
         try {
             val userId = call.parameters["userId"].toString()
             usersRepository.updateUserHeader(userId, body.extractStringBody())
-            val user = usersRepository.getExtendedUserById(userId)
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
     }
+
+    get("/users/{userId}/following") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(usersRepository.getUserFollowing(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/users/{userId}/followers") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(usersRepository.getUserFollowers(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/users/{userId}/followers-ids") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(usersRepository.getUserFollowersIds(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/users/{userId}/following-ids") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(usersRepository.getUserFollowingIds(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    post("/users/{userId}/followers/{followerId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val followerId = call.parameters["followerId"].toString()
+            usersRepository.followUser(userId, followerId)
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    delete("/users/{userId}/followers/{followerId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val followerId = call.parameters["followerId"].toString()
+            usersRepository.unfollowUser(userId, followerId)
+            call.respondSuccess(usersRepository.getExtendedUserById(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    /*post("/users/{userId}/following/{followingId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val followingId = call.parameters["followingId"].toString()
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    delete("/users/{userId}/following/{followingId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            val followingId = call.parameters["followingId"].toString()
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }*/
 
 }

@@ -15,7 +15,7 @@ fun ResultRow.toUserEntity() = UserEntity(
     gender = Gender.fromString(get(UsersTable.gender).toString()),
     publicProfile = get(UsersTable.publicAccess),
     avatarUrl = get(UsersTable.avatarUrl),
-    headerUrl = get(UsersTable.headerUrl),
+    headerUrl = get(UsersTable.headerUrl)
 )
 
 fun ResultRow.toUserExtendedEntity() = UserExtendedEntity(
@@ -27,5 +27,5 @@ fun ResultRow.toUserExtendedEntity() = UserExtendedEntity(
     publicProfile = get(UsersTable.publicAccess),
     accessToken = get(CredentialsTable.accessToken),
     avatarUrl = get(UsersTable.avatarUrl),
-    headerUrl = get(UsersTable.headerUrl),
+    headerUrl = get(UsersTable.headerUrl)
 )

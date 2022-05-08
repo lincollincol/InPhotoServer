@@ -2,7 +2,6 @@ package com.linc.routes
 
 import com.linc.data.network.dto.request.auth.SignInDTO
 import com.linc.data.network.dto.request.auth.SignUpDTO
-import com.linc.data.network.mapper.toUserDto
 import com.linc.data.repository.AuthRepository
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.UsersRepository
@@ -29,7 +28,7 @@ fun Route.auth() {
                 updateUserHeader(userId, generatedHeaderUrl)
                 getExtendedUserById(userId)
             }
-            call.respondSuccess(user.toUserDto())
+            call.respondSuccess(user)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
@@ -37,8 +36,8 @@ fun Route.auth() {
 
     post<SignInDTO>("/auth/sign-in") { request ->
         try {
-            val user = authRepository.signIn(request)
-            call.respondSuccess(user.toUserDto())
+            val userId = authRepository.signIn(request)
+            call.respondSuccess(userRepository.getExtendedUserById(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }
