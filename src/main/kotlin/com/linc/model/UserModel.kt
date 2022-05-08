@@ -1,8 +1,8 @@
-package com.linc.data.network.dto.response.users
+package com.linc.model
 
 import com.linc.data.database.entity.user.Gender
-@Deprecated(level = DeprecationLevel.ERROR, message = "Replace with UserModel")
-data class UserDTO(
+
+data class UserModel(
     val id: String,
     val name: String,
     val email: String,

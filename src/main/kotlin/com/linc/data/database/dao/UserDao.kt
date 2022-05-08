@@ -14,9 +14,7 @@ class UserDao {
     suspend fun createEmptyUser(
         email: String,
         name: String,
-        gender: String/*,
-        avatarUrl: String,
-        headerUrl: String*/
+        gender: String
     ) = SqlExecutor.executeQuery {
         UsersTable.insert { table ->
             table[UsersTable.id] = UUID.randomUUID()
@@ -30,11 +28,16 @@ class UserDao {
         } get UsersTable.id
     }
 
-    suspend fun userWithNameExist(
+    suspend fun existUsername(
         username: String
     ) = SqlExecutor.executeQuery {
-        UsersTable.select { UsersTable.name eq username }
-            .singleOrNull()
+        UsersTable.select { UsersTable.name eq username }.singleOrNull()
+    }
+
+    suspend fun existEmail(
+        email: String
+    ) = SqlExecutor.executeQuery {
+        UsersTable.select { UsersTable.email eq email }.singleOrNull()
     }
 
     suspend fun getUsers() = SqlExecutor.executeQuery {
@@ -61,6 +64,16 @@ class UserDao {
             ?.toUserExtendedEntity()
     }
 
+    suspend fun getUserByEmailOrName(
+        email: String,
+        name: String
+    ) = SqlExecutor.executeQuery {
+        UsersTable.innerJoin(CredentialsTable)
+            .select { (UsersTable.email eq email) or (UsersTable.name eq name) }
+            .singleOrNull()
+            ?.toUserExtendedEntity()
+    }
+
     suspend fun getUserByName(name: String) = SqlExecutor.executeQuery {
         UsersTable.innerJoin(CredentialsTable)
             .select { UsersTable.name eq name }
@@ -71,7 +84,8 @@ class UserDao {
     suspend fun getUserAvatar(userId: UUID) = SqlExecutor.executeQuery {
         UsersTable.select { UsersTable.id eq userId }
             .firstOrNull()
-            ?.toUserEntity()?.avatarUrl
+            ?.toUserEntity()
+            ?.avatarUrl
     }
 
     suspend fun getUserById(userId: UUID) = SqlExecutor.executeQuery {

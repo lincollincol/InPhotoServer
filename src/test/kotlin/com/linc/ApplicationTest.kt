@@ -1,18 +1,10 @@
 package com.linc
 
-import io.ktor.routing.*
+import com.linc.plugins.configureRouting
 import io.ktor.http.*
-import io.ktor.serialization.*
-import io.ktor.features.*
-import io.ktor.content.*
-import io.ktor.http.content.*
-import org.slf4j.event.*
-import io.ktor.application.*
-import io.ktor.response.*
-import io.ktor.request.*
-import kotlin.test.*
 import io.ktor.server.testing.*
-import com.linc.plugins.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ApplicationTest {
     @Test

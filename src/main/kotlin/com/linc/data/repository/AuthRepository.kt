@@ -7,6 +7,7 @@ import com.linc.data.network.dto.request.auth.SignInDTO
 import com.linc.data.network.dto.request.auth.SignUpDTO
 import com.linc.utils.JWTUtils
 import com.linc.utils.extensions.toUUID
+import kotlinx.coroutines.Dispatchers
 
 class AuthRepository(
     private val userDao: UserDao,
@@ -14,23 +15,15 @@ class AuthRepository(
     private val jwtUtils: JWTUtils
 ) {
 
-    suspend fun signIn(request: SignInDTO): UserExtendedEntity {
-        var user: UserExtendedEntity? = userDao.getUserByEmail(request.login).getOrNull()
-
-        if (user == null) {
-            user = userDao.getUserByName(request.login).getOrNull()
-        }
-
-        user ?: throw Exception("User does not exist!")
-
-        val credentials = credentialsDao.getCredentialsByUserId(user.id.toUUID()).getOrNull()
-            ?: throw Exception("Something went wrong!")
-
+    suspend fun signIn(request: SignInDTO): String = with(Dispatchers.IO) {
+        val user: UserExtendedEntity = userDao.getUserByEmailOrName(request.login, request.login)
+            .getOrNull() ?: throw Exception("User does not exist!")
+        val credentials = credentialsDao.getCredentialsByUserId(user.id.toUUID())
+            .getOrNull() ?: throw Exception("Credentials not found!")
         if (request.password != credentials.password) {
             throw Exception("Invalid password!")
         }
-
-        return user
+        return user.id
     }
 
     suspend fun signUp(request: SignUpDTO): String {
