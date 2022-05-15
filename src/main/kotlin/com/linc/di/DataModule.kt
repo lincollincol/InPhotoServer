@@ -5,10 +5,7 @@ import com.linc.data.database.DatabaseManager
 import com.linc.data.database.dao.*
 import com.linc.data.network.AvatarManager
 import com.linc.data.network.ContentManager
-import com.linc.data.repository.AuthRepository
-import com.linc.data.repository.MediaRepository
-import com.linc.data.repository.PostsRepository
-import com.linc.data.repository.UsersRepository
+import com.linc.data.repository.*
 import com.linc.utils.Constants
 import com.linc.utils.Constants.CLOUDINARY_URL
 import org.koin.dsl.module
@@ -29,12 +26,15 @@ val dataModule = module {
     single<PostTagDao> { PostTagDao() }
     single<SystemContentDao> { SystemContentDao() }
     single<FollowersDao> { FollowersDao() }
+    single<ChatsDao> { ChatsDao() }
+    single<UserChatDao> { UserChatDao() }
 
     // Repositories
     single<AuthRepository> { AuthRepository(get(), get(), get()) }
     single<UsersRepository> { UsersRepository(get(), get()) }
     single<MediaRepository> { MediaRepository(get(), get(), get()) }
     single<PostsRepository> { PostsRepository(get(), get(), get(), get(), get(), get()) }
+    single<ChatsRepository> { ChatsRepository(get(), get()) }
 
     // Remote api
     single<ContentManager> { ContentManager(get()) }

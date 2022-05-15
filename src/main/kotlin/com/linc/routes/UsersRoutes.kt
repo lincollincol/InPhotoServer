@@ -193,24 +193,4 @@ fun Route.users() {
         }
     }
 
-    /*post("/users/{userId}/following/{followingId}") {
-        try {
-            val userId = call.parameters["userId"].toString()
-            val followingId = call.parameters["followingId"].toString()
-            call.respondSuccess(Unit)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }
-
-    delete("/users/{userId}/following/{followingId}") {
-        try {
-            val userId = call.parameters["userId"].toString()
-            val followingId = call.parameters["followingId"].toString()
-            call.respondSuccess(Unit)
-        } catch (e: Exception) {
-            call.respondFailure(e.errorMessage())
-        }
-    }*/
-
 }

@@ -39,6 +39,10 @@ class MediaRepository(
         return@withContext contentManager.upload(data, ContentManager.Directory.HEADER)
     }
 
+    suspend fun uploadChatContent(data: InputStream): String = withContext(Dispatchers.IO) {
+        return@withContext contentManager.upload(data, ContentManager.Directory.CHAT)
+    }
+
     suspend fun uploadPost(data: InputStream): String = withContext(Dispatchers.IO) {
         return@withContext contentManager.upload(data, ContentManager.Directory.POST)
     }

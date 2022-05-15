@@ -19,6 +19,7 @@ fun Application.configureRouting() {
 //        }
 
         content()
+        chats()
         // Static plugin. Try to access `/static/index.html`
         static("/static") {
             resources("static")
