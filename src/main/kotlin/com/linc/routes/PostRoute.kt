@@ -18,10 +18,47 @@ fun Route.posts() {
     val postsRepository: PostsRepository by inject()
     val mediaRepository: MediaRepository by inject()
 
+    get("/posts-extended/tags/{tagId}") {
+        try {
+            val tagId = call.parameters["tagId"].toString()
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(postsRepository.getExtendedPostsByTag(tagId, userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts/tags/{tagId}") {
+        try {
+            val tagId = call.parameters["tagId"].toString()
+            call.respondSuccess(postsRepository.getPostsByTag(tagId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
     get("/posts-extended/users/{userId}") {
         try {
             val userId = call.parameters["userId"].toString()
             call.respondSuccess(postsRepository.getUserExtendedPosts(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts-extended/users-following/{userId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(postsRepository.getUserFollowingExtendedPosts(userId))
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    get("/posts/users-following/{userId}") {
+        try {
+            val userId = call.parameters["userId"].toString()
+            call.respondSuccess(postsRepository.getUserFollowingPosts(userId))
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())
         }

@@ -21,6 +21,7 @@ class ContentManager(
         HEADER("header"),
         CHAT("chat"),
         SYSTEM_HEADER("system/header"),
+        SYSTEM_STICKERS("system/stickers"),
         SYSTEM_AVATAR_MALE("system/avatar/male"),
         SYSTEM_AVATAR_FEMALE("system/avatar/female")
     }

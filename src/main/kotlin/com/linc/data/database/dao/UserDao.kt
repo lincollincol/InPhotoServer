@@ -40,6 +40,18 @@ class UserDao {
         UsersTable.select { UsersTable.email eq email }.singleOrNull()
     }
 
+    suspend fun searchUsersByQuery(name: String) = SqlExecutor.executeQuery {
+        return@executeQuery UsersTable.select {
+            (UsersTable.name like "%$name%") or (UsersTable.email like "%$name%")
+        }.map(ResultRow::toUserEntity)
+    }
+
+    suspend fun searchExtendedUsersByQuery(name: String) = SqlExecutor.executeQuery {
+        return@executeQuery CredentialsTable.innerJoin(UsersTable)
+            .select { (UsersTable.name like "%$name%") or (UsersTable.email like "%$name%") }
+            .map(ResultRow::toUserExtendedEntity)
+    }
+
     suspend fun getUsers() = SqlExecutor.executeQuery {
         UsersTable.selectAll().map { it.toUserEntity() }
     }

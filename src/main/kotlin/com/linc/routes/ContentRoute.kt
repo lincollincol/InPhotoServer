@@ -32,6 +32,14 @@ fun Route.content() {
         }
     }
 
+    get("/content/stickers") {
+        try {
+            call.respondSuccess(mediaRepository.loadStickers())
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
     post("/content/chat-file") { request ->
         try {
             val data = call.receiveMultipart()

@@ -5,14 +5,14 @@ import com.linc.data.database.dao.UserDao
 import com.linc.data.database.entity.user.UserExtendedEntity
 import com.linc.data.network.dto.request.auth.SignInDTO
 import com.linc.data.network.dto.request.auth.SignUpDTO
-import com.linc.utils.JWTUtils
+import com.linc.utils.extensions.randomUUID
 import com.linc.utils.extensions.toUUID
 import kotlinx.coroutines.Dispatchers
 
 class AuthRepository(
     private val userDao: UserDao,
     private val credentialsDao: CredentialsDao,
-    private val jwtUtils: JWTUtils
+//    private val jwtUtils: JWTUtils
 ) {
 
     suspend fun signIn(request: SignInDTO): String = with(Dispatchers.IO) {
@@ -36,7 +36,8 @@ class AuthRepository(
         credentialsDao.createAccount(
             userId,
             request,
-            jwtUtils.createToken(userId.toString())
+            randomUUID()
+//            jwtUtils.createToken(userId.toString())
         ).getOrNull() ?: throw Exception("Cannot create account!")
 
         return userId.toString()

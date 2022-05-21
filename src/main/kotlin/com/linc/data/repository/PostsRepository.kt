@@ -67,6 +67,21 @@ class PostsRepository(
             ?: throw Exception("Cannot load user posts!")
     }
 
+    suspend fun getExtendedPostsByTag(
+        tagId: String,
+        userId: String,
+    ): List<ExtendedPostEntity> = withContext(Dispatchers.IO) {
+        return@withContext postDao.getExtendedPostsByTag(tagId.toUUID(), userId.toUUID()).getOrNull()
+            ?: throw Exception("Posts not found!")
+    }
+
+    suspend fun getPostsByTag(
+        tagId: String
+    ): List<PostEntity> = withContext(Dispatchers.IO) {
+        return@withContext postDao.getPostsByTag(tagId.toUUID()).getOrNull()
+            ?: throw Exception("Posts not found!")
+    }
+
     suspend fun getExtendedPosts(
         userId: String
     ): List<ExtendedPostEntity> = withContext(Dispatchers.IO) {
@@ -101,6 +116,20 @@ class PostsRepository(
     ): PostEntity = withContext(Dispatchers.IO) {
         return@withContext postDao.getPostByPostId(postId.toUUID()).getOrNull()
             ?: throw Exception("Post not found!")
+    }
+
+    suspend fun getUserFollowingPosts(
+        userId: String
+    ): List<PostEntity> = withContext(Dispatchers.IO) {
+        return@withContext postDao.getUserFollowingPosts(userId.toUUID()).getOrNull()
+            ?: throw Exception("Cannot load user following posts!")
+    }
+
+    suspend fun getUserFollowingExtendedPosts(
+        userId: String
+    ): List<ExtendedPostEntity> = withContext(Dispatchers.IO) {
+        return@withContext postDao.getUserFollowingExtendedPosts(userId.toUUID()).getOrNull()
+            ?: throw Exception("Cannot load user following posts!")
     }
 
     suspend fun getUserPosts(

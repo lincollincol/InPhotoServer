@@ -51,6 +51,12 @@ class MediaRepository(
         contentManager.loadContentUrls(dir)
     }
 
+    suspend fun loadStickers() = systemContentDao
+        .getSystemContentByDir(ContentManager.Directory.SYSTEM_STICKERS.value)
+        .getOrNull()
+        ?.map { it.url }
+        ?: throw Exception("Cannot load default header!")
+
     suspend fun loadRandomHeaderUrl() =
         systemContentDao.getRandomSystemContentByDir(
             ContentManager.Directory.SYSTEM_HEADER.value
@@ -67,6 +73,7 @@ class MediaRepository(
     suspend fun syncWithRemoteSystemDirs() = withContext(Dispatchers.IO) {
         val directories = listOf(
             ContentManager.Directory.SYSTEM_HEADER,
+            ContentManager.Directory.SYSTEM_STICKERS,
             ContentManager.Directory.SYSTEM_AVATAR_MALE,
             ContentManager.Directory.SYSTEM_AVATAR_FEMALE
         )
