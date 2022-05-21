@@ -36,6 +36,34 @@ class UsersRepository(
             ?: throw Exception("User not found!")
     }
 
+    suspend fun searchUsers(query: String): List<UserModel> = withContext(Dispatchers.IO) {
+        return@withContext usersDao.searchUsersByQuery(query)
+            .getOrNull()
+            ?.map { userEntity ->
+                async {
+                    val followersCount = async { getUserFollowersCount(userEntity.id) }
+                    val followingCount = async { getUserFollowingCount(userEntity.id) }
+                    userEntity.toModel(followersCount.await(), followingCount.await())
+                }
+            }
+            ?.awaitAll()
+            ?: throw Exception("Users not found!")
+    }
+
+    suspend fun searchExtendedUsers(query: String): List<UserModel> = withContext(Dispatchers.IO) {
+        return@withContext usersDao.searchExtendedUsersByQuery(query)
+            .getOrNull()
+            ?.map { userEntity ->
+                async {
+                    val followersCount = async { getUserFollowersCount(userEntity.id) }
+                    val followingCount = async { getUserFollowingCount(userEntity.id) }
+                    userEntity.toModel(followersCount.await(), followingCount.await())
+                }
+            }
+            ?.awaitAll()
+            ?: throw Exception("Users not found!")
+    }
+
     suspend fun getExtendedUsers(): List<UserModel> = withContext(Dispatchers.IO) {
         return@withContext usersDao.getExtendedUsers()
             .getOrNull()

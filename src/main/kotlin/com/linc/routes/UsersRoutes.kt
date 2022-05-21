@@ -3,7 +3,6 @@ package com.linc.routes
 import com.linc.data.database.entity.user.Gender
 import com.linc.data.network.dto.request.users.UpdateVisibilityDTO
 import com.linc.data.repository.MediaRepository
-import com.linc.data.repository.PostsRepository
 import com.linc.data.repository.UsersRepository
 import com.linc.utils.extensions.errorMessage
 import com.linc.utils.extensions.extractStringBody
@@ -19,11 +18,14 @@ fun Route.users() {
 
     val usersRepository: UsersRepository by inject()
     val mediaRepository: MediaRepository by inject()
-    val postsRepository: PostsRepository by inject()
 
     get("/users") {
         try {
-            val users = usersRepository.getExtendedUsers()
+            val query = call.parameters["query"].orEmpty()
+            val users = when {
+                query.isEmpty() -> usersRepository.getExtendedUsers()
+                else -> usersRepository.searchExtendedUsers(query)
+            }
             call.respondSuccess(users)
         } catch (e: Exception) {
             call.respondFailure(e.errorMessage())

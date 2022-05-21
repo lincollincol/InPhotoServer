@@ -30,11 +30,13 @@ val dataModule = module {
     single<UserChatDao> { UserChatDao() }
 
     // Repositories
-    single<AuthRepository> { AuthRepository(get(), get(), get()) }
+//    single<AuthRepository> { AuthRepository(get(), get(), get()) }
+    single<AuthRepository> { AuthRepository(get(), get()) }
     single<UsersRepository> { UsersRepository(get(), get()) }
     single<MediaRepository> { MediaRepository(get(), get(), get()) }
     single<PostsRepository> { PostsRepository(get(), get(), get(), get(), get(), get()) }
     single<ChatsRepository> { ChatsRepository(get(), get()) }
+    single<TagsRepository> { TagsRepository(get(), get()) }
 
     // Remote api
     single<ContentManager> { ContentManager(get()) }
