@@ -20,6 +20,7 @@ class ContentManager(
         POST("post"),
         HEADER("header"),
         CHAT("chat"),
+        STORY("story"),
         SYSTEM_HEADER("system/header"),
         SYSTEM_STICKERS("system/stickers"),
         SYSTEM_AVATAR_MALE("system/avatar/male"),

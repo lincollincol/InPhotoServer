@@ -47,6 +47,10 @@ class MediaRepository(
         return@withContext contentManager.upload(data, ContentManager.Directory.POST)
     }
 
+    suspend fun uploadStory(data: InputStream): String = withContext(Dispatchers.IO) {
+        return@withContext contentManager.upload(data, ContentManager.Directory.STORY)
+    }
+
     suspend fun loadImageUrls(dir: ContentManager.Directory) = withContext(Dispatchers.IO) {
         contentManager.loadContentUrls(dir)
     }
