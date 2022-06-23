@@ -28,6 +28,10 @@ class UserDao {
         } get UsersTable.id
     }
 
+    suspend fun deleteUserById(userId: UUID) = SqlExecutor.executeQuery {
+        UsersTable.deleteWhere { UsersTable.id eq userId }
+    }
+
     suspend fun existUsername(
         username: String
     ) = SqlExecutor.executeQuery {

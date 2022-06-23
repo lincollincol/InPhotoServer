@@ -4,12 +4,13 @@ import com.linc.data.database.entity.post.ExtendedPostEntity
 import com.linc.data.database.entity.post.PostEntity
 import com.linc.data.database.table.PostsTable
 import com.linc.data.database.table.UsersTable
+import com.linc.utils.extensions.removeSqlEscapes
 import org.jetbrains.exposed.sql.ResultRow
 
 fun ResultRow.toPostEntity() = PostEntity(
     id = get(PostsTable.id).toString(),
     createdTimestamp = get(PostsTable.createdTimestamp).millis,
-    description = get(PostsTable.description),
+    description = get(PostsTable.description).removeSqlEscapes(),
     contentUrl = get(PostsTable.contentUrl),
     userId = get(PostsTable.userId).toString()
 )
@@ -23,7 +24,7 @@ fun ResultRow.toExtendedPostEntity(
 ) = ExtendedPostEntity(
     id = get(PostsTable.id).toString(),
     createdTimestamp = get(PostsTable.createdTimestamp).millis,
-    description = get(PostsTable.description),
+    description = get(PostsTable.description).removeSqlEscapes(),
     contentUrl = get(PostsTable.contentUrl),
     userId = get(PostsTable.userId).toString(),
     username = get(UsersTable.name),
