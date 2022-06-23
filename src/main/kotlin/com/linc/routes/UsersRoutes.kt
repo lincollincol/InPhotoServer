@@ -51,6 +51,26 @@ fun Route.users() {
         }
     }
 
+    put<String>("/users/{userId}/username") { request ->
+        try {
+            val userId = call.parameters["userId"].toString()
+            usersRepository.updateUserName(userId, request.extractStringBody())
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    delete("/users/{userId}") { request ->
+        try {
+            val userId = call.parameters["userId"].toString()
+            usersRepository.deleteUserById(userId)
+            call.respondSuccess(Unit)
+        } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
     post<String>("/users/{userId}/status") { request ->
         try {
             val userId = call.parameters["userId"].toString()

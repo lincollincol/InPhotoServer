@@ -18,6 +18,10 @@ class UsersRepository(
     private val followersDao: FollowersDao
 ) {
 
+    suspend fun deleteUserById(userId: String) = withContext(Dispatchers.IO) {
+        usersDao.deleteUserById(UUID.fromString(userId)).getOrNull()
+    }
+
     suspend fun getUserById(userId: String): UserModel = withContext(Dispatchers.IO) {
         val followersCount = async { getUserFollowersCount(userId) }
         val followingCount = async { getUserFollowingCount(userId) }

@@ -13,7 +13,7 @@ class FollowersDao {
         userId: UUID,
         followerId: UUID
     ) = SqlExecutor.executeQuery {
-        FollowersTable.insert { table ->
+        FollowersTable.insertIgnore { table ->
             table[FollowersTable.id] = UUID.randomUUID()
             table[FollowersTable.followedId] = userId
             table[FollowersTable.followerId] = followerId
@@ -33,22 +33,26 @@ class FollowersDao {
         FollowersTable.innerJoin(UsersTable, { followerId }, { id })
             .select { FollowersTable.followedId eq userId }
             .map(ResultRow::toUserEntity)
+            .distinctBy { it.id }
     }
 
     suspend fun getUserFollowersIds(userId: UUID) = SqlExecutor.executeQuery {
         FollowersTable.select { FollowersTable.followedId eq userId }
             .map { it[FollowersTable.followerId].toString() }
+            .distinct()
     }
 
     suspend fun getUserFollowing(userId: UUID) = SqlExecutor.executeQuery {
         FollowersTable.innerJoin(UsersTable, { followedId }, { id })
             .select { FollowersTable.followerId eq userId }
             .map(ResultRow::toUserEntity)
+            .distinctBy { it.id }
     }
 
     suspend fun getUserFollowingIds(userId: UUID) = SqlExecutor.executeQuery {
         FollowersTable.select { FollowersTable.followerId eq userId }
             .map { it[FollowersTable.followedId].toString() }
+            .distinct()
     }
 
     suspend fun getUserFollowersCount(userId: UUID) = SqlExecutor.executeQuery {

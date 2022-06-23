@@ -13,7 +13,6 @@ fun Application.configureRouting() {
         posts()
 
         testRoute()
-
         users()
 //        authenticate(AUTH_CONFIG) {
 //        }

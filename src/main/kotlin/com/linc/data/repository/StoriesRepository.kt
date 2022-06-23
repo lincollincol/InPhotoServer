@@ -10,7 +10,6 @@ import com.linc.model.mappers.toModel
 import com.linc.model.mappers.toStoriesModel
 import com.linc.utils.extensions.toUUID
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
 
 class StoriesRepository(
@@ -45,34 +44,31 @@ class StoriesRepository(
             ?.toModel()
     }
 
+//    suspend fun getUserStories(
+//        userId: String
+//    ): UserStoryModel = withContext(Dispatchers.IO) {
+//        val user = async {
+//            userDao.getUserById(userId.toUUID())
+//                .getOrNull()
+//                ?: error("User not found!")
+//        }
+//        val stories = async {
+//            storiesDao.getStoriesByUser(userId.toUUID())
+//                .getOrNull()
+//                ?: error("Cannot load user stories!")
+//        }
+//        return@withContext user.await().toStoriesModel(stories.await())
+//    }
+
     suspend fun getUserStories(
         userId: String
-    ): UserStoryModel = withContext(Dispatchers.IO) {
-        val user = async {
-            userDao.getUserById(userId.toUUID())
-                .getOrNull()
-                ?: error("User not found!")
-        }
-        val stories = async {
-            storiesDao.getStoriesByUser(userId.toUUID())
-                .getOrNull()
-                ?: error("Cannot load user stories!")
-        }
-        return@withContext user.await().toStoriesModel(stories.await())
+    ): UserStoryModel? = withContext(Dispatchers.IO) {
+        return@withContext storiesDao.getUserStories(userId.toUUID())
+            .getOrNull()
+            ?.toStoriesModel()
     }
 
     suspend fun getUserFollowingStories(
-        userId: String
-    ): List<UserStoryModel> = withContext(Dispatchers.IO) {
-        val stories = storiesDao.getUserFollowingStories(userId.toUUID())
-            .getOrNull()
-            ?.map(UserStoryEntity::toStoriesModel)
-            ?: error("Cannot load user following stories!")
-//        return@withContext user.await().toStoriesModel(stories.await())
-        return@withContext stories
-    }
-
-    suspend fun getUserFollowingStoryPreview(
         userId: String
     ): List<UserStoryModel> = withContext(Dispatchers.IO) {
         val stories = storiesDao.getUserFollowingStories(userId.toUUID())

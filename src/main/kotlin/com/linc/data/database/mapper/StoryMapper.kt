@@ -6,10 +6,14 @@ import com.linc.data.database.table.StoriesTable
 import com.linc.data.database.table.UsersTable
 import org.jetbrains.exposed.sql.ResultRow
 
-fun ResultRow.toUserStoryEntity(stories: List<ResultRow>) = UserStoryEntity(
+fun ResultRow.toUserStoryEntity(
+    latestStoryTimestamp: Long,
+    stories: List<ResultRow>,
+) = UserStoryEntity(
     userId = get(UsersTable.id).toString(),
     username = get(UsersTable.name),
     userAvatarUrl = get(UsersTable.avatarUrl),
+    latestStoryTimestamp = latestStoryTimestamp,
     stories = stories.map(ResultRow::toStoryEntity)
 )
 

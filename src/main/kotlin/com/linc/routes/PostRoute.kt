@@ -191,6 +191,7 @@ fun Route.posts() {
 
     post<String>("/posts/{postId}/comments/{userId}") { body ->
         try {
+            println("----------> Comment: ${body}")
             val commentEntity = postsRepository.createPostComment(
                 call.parameters["postId"].toString(),
                 call.parameters["userId"].toString(),

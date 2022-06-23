@@ -40,13 +40,39 @@ class StoriesDao {
             .map(ResultRow::toStoryEntity)
     }
 
+    suspend fun getUserStories(userId: UUID) = SqlExecutor.executeQuery {
+        val result = StoriesTable.innerJoin(UsersTable)
+            .select { StoriesTable.userId eq userId }
+            .andWhere { StoriesTable.expireTimestamp greater DateTime.now() }
+            .toList()
+
+        if (result.isEmpty()) {
+            return@executeQuery null
+        }
+
+        val latestStory = result.maxOf {
+            it.get(StoriesTable.createdTimestamp)
+        }
+        result.firstOrNull()?.toUserStoryEntity(
+            latestStory.millis,
+            result
+        )
+    }
+
     suspend fun getUserFollowingStories(userId: UUID) = SqlExecutor.executeQuery {
         StoriesTable.innerJoin(UsersTable, { StoriesTable.userId }, { UsersTable.id })
             .innerJoin(FollowersTable, { UsersTable.id }, { FollowersTable.followedId })
             .select { FollowersTable.followerId eq userId }
+            .andWhere { StoriesTable.expireTimestamp greater DateTime.now() }
             .groupBy { it.get(UsersTable.id) }
-            .map {
-                it.value.firstOrNull()?.toUserStoryEntity(it.value)
+            .map { entry ->
+                val latestStory = entry.value.maxOf {
+                    it.get(StoriesTable.createdTimestamp)
+                }
+                entry.value.firstOrNull()?.toUserStoryEntity(
+                    latestStory.millis,
+                    entry.value
+                )
             }
             .filterNotNull()
     }
