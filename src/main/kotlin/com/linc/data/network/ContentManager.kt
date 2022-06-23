@@ -28,10 +28,10 @@ class ContentManager(
     }
 
     fun upload(stream: InputStream, directory: Directory): String {
-        val image = File("temp", "${randomUUID()}_${System.currentTimeMillis()}")
+//        val image = File("temp", "${randomUUID()}_${System.currentTimeMillis()}")
+        val image = File.createTempFile(randomUUID(), "_${System.currentTimeMillis()}")
         image.writeBytes(stream.buffered().use { it.readBytes() })
         val url = upload(image, directory)
-        image.delete()
         return url
     }
 
@@ -39,7 +39,6 @@ class ContentManager(
         val image = File("temp", "${randomUUID()}_${System.currentTimeMillis()}")
         image.writeBytes(bytes)
         val url = upload(image, directory)
-        image.delete()
         return url
     }
 
@@ -48,7 +47,7 @@ class ContentManager(
             image,
             ObjectUtils.asMap("public_id", randomUUID(), "folder", directory.value)
         )
-        image.delete()
+        image.deleteOnExit()
         return response["url"].toString()
     }
 
