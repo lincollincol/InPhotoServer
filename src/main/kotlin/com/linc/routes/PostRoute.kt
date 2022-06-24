@@ -1,5 +1,6 @@
 package com.linc.routes
 
+import com.linc.data.network.dto.request.post.PostUrlDTO
 import com.linc.data.network.dto.request.post.UpdatePostDTO
 import com.linc.data.repository.MediaRepository
 import com.linc.data.repository.PostsRepository
@@ -108,6 +109,17 @@ fun Route.posts() {
             val userId = call.parameters["userId"].toString()
             call.respondSuccess(postsRepository.getExtendedPosts(userId))
         } catch (e: Exception) {
+            call.respondFailure(e.errorMessage())
+        }
+    }
+
+    post<PostUrlDTO>("/posts-url/{userId}") { request ->
+        try {
+            val userId = call.parameters["userId"].toString()
+            postsRepository.createPost(userId, request.url, request.description, request.tags)
+            call.respondSuccess(null)
+        } catch (e: Exception) {
+            e.printStackTrace()
             call.respondFailure(e.errorMessage())
         }
     }
